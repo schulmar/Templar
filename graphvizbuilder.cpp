@@ -42,7 +42,7 @@ inline bool isTemplateInstantiation(const TraceEntry & entry)
 }
 
 GraphvizBuilder::GraphvizBuilder()
-    : gvc(gvContext(), gvFreeContext), counter(0)
+    : gvc(gvContext(), gvFreeContext)//TODO unused variable:, counter(0)
 {
 }
 

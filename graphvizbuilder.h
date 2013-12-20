@@ -39,7 +39,7 @@ private:
     NodeIdToGraph nodeToGraph;
 
     QSharedPointer<graph_t> actualGraph;
-    unsigned int counter;
+    //TODO unused variable: unsigned int counter;
 
     std::stack<node_t*> nodeStack;
 };

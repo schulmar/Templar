@@ -26,7 +26,7 @@
 #include <QListWidget>
 #include <QSplitter>
 
-static const int BigGraph = 200;
+//TODO unused variable: static const int BigGraph = 200;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
