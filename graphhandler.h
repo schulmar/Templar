@@ -27,6 +27,7 @@ public:
     typedef GraphvizBuilder::NodeIdToGraph NodeIdToGraph;
 
     GraphHandler(QGraph *qGraph) : theGraph(qGraph) {}
+    virtual ~GraphHandler() {}
 
     void handleEvent(const TraceEntry &entry);
     void undoEvent();
