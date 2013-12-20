@@ -6,8 +6,8 @@
 
 StringListDialog::StringListDialog(QString elemType, QWidget *parent) :
     QDialog(parent),
-    elemType(elemType),
-    ui(new Ui::StringListDialog)
+    ui(new Ui::StringListDialog),
+    elemType(elemType)
 {
     ui->setupUi(this);
 
