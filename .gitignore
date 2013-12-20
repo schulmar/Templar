@@ -2,3 +2,4 @@ Makefile
 ui_*.h
 moc_*
 qrc_*
+*.o
