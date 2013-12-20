@@ -13,6 +13,11 @@ QT += \
     xml \
     xmlpatterns \
     core gui
+#check for Qt5
+contains(QT_VERSION, ^5\\..*) {
+QT += widgets
+DEFINES+=USE_QT5
+}
 
 TARGET = Templar
 TEMPLATE = app
