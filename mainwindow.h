@@ -40,14 +40,14 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_actionExport_to_PNG_activated();
-    void on_actionTwopi_activated();
-    void on_actionFdp_activated();
-    void on_actionNeato_activated();
-    void on_actionCirco_activated();
-    void on_actionDot_activated();
-    void on_actionExit_activated();
-    void on_actionOpen_trace_activated();
+    void on_actionExport_to_PNG_triggered();
+    void on_actionTwopi_triggered();
+    void on_actionFdp_triggered();
+    void on_actionNeato_triggered();
+    void on_actionCirco_triggered();
+    void on_actionDot_triggered();
+    void on_actionExit_triggered();
+    void on_actionOpen_trace_triggered();
 
     void nodeClicked(const QString& node);
 

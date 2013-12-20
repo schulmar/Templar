@@ -261,7 +261,7 @@ QAction* MainWindow::createAction(const char* name, const char* shortcut, const 
     return action;
 }
 
-void MainWindow::on_actionOpen_trace_activated()
+void MainWindow::on_actionOpen_trace_triggered()
 {
     QString fileFilters = tr("Trace files (*.trace.xml);; Any files (*)");
     QString fileName =
@@ -306,32 +306,32 @@ void MainWindow::showInformation(QString info)
                              + " | " + info);
 }
 
-void MainWindow::on_actionExit_activated()
+void MainWindow::on_actionExit_triggered()
 {
     qApp->quit();
 }
 
-void MainWindow::on_actionDot_activated()
+void MainWindow::on_actionDot_triggered()
 {
     setLayout("dot");
 }
 
-void MainWindow::on_actionCirco_activated()
+void MainWindow::on_actionCirco_triggered()
 {
     setLayout("circo");
 }
 
-void MainWindow::on_actionNeato_activated()
+void MainWindow::on_actionNeato_triggered()
 {
     setLayout("neato");
 }
 
-void MainWindow::on_actionFdp_activated()
+void MainWindow::on_actionFdp_triggered()
 {
     setLayout("fdp");
 }
 
-void MainWindow::on_actionTwopi_activated()
+void MainWindow::on_actionTwopi_triggered()
 {
     setLayout("twopi");
 }
@@ -340,7 +340,7 @@ void MainWindow::setLayout(QString /*layout*/){
 
 }
 
-void MainWindow::on_actionExport_to_PNG_activated()
+void MainWindow::on_actionExport_to_PNG_triggered()
 {
     QString fileFilters = tr("Png files (*.png)");
 
