@@ -4,10 +4,8 @@
 #
 #-------------------------------------------------
 
-INCLUDEPATH += /home/ezoltbo/prefix/include
-
-LIBS += -L/home/ezoltbo/prefix/lib \
-    -lgvc \
+INCLUDEPATH += 
+LIBS += -lgvc \
     -lgraph \
     -lcdt
 
