@@ -30,4 +30,4 @@ qmake INCLUDEPATH+=/path/to/includes/of/graphviz
 Compatibility
 =============
 
-The current version has been compiled succesfully with Graphviz 2.34.0 and Qt4.8.5/Qt 5.2.0 on GCC 4.8.2
+The current version has been compiled succesfully with Graphviz 2.34.0 and Qt4.8.5/Qt 5.2.0 on GCC 4.8.2 and Clang 3.5 (trunk 196048)
