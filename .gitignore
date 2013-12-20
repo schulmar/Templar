@@ -1,3 +1,4 @@
 Makefile
 ui_*.h
 moc_*
+qrc_*
