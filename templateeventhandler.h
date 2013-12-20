@@ -5,7 +5,7 @@
 
 namespace Templar {
 
-class TraceEntry;
+struct TraceEntry;
 
 class TemplateEventHandler
 {
