@@ -336,7 +336,7 @@ void MainWindow::on_actionTwopi_activated()
     setLayout("twopi");
 }
 
-void MainWindow::setLayout(QString layout){
+void MainWindow::setLayout(QString /*layout*/){
 
 }
 
