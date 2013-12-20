@@ -51,7 +51,7 @@ void EditorHandler::reset()
 
 void EditorHandler::forward(const std::vector<TraceEntry> &entryVec)
 {
-    for (int i = 0; i < entryVec.size() - 1; ++i)
+    for (int i = 0; i < (int)entryVec.size() - 1; ++i)
     {
         const TraceEntry& entry = entryVec[i];
         QColor color = (entry.isBegin)?
@@ -78,7 +78,7 @@ void EditorHandler::highlightPos(const QString& fileLoc, const QColor& color) {
 
     QString fileName = fileLocation[0];
     int lineNo = fileLocation[1].toInt();
-    int charNo = fileLocation[2].toInt();
+    //TODO unused variable: int charNo = fileLocation[2].toInt();
     // TODO: throw exception if conversion fails
 
 
