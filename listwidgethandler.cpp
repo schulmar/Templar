@@ -77,7 +77,7 @@ void ListWidgetHandler::undoEvent()
 
 void ListWidgetHandler::reset()
 {
-    if (!listWidget->count() == 0)
+    if (!(listWidget->count() == 0))
         listWidget->clear();
 
     if (!undoList.empty())
