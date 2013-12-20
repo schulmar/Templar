@@ -27,6 +27,9 @@ public:
         return defaultValue;
     }
 
+		//silence clang warning
+		// -> "unhide" this function (because of done()) 
+    using QDialog::done;
 public slots:
     void addItem();
     void deleteItem();
