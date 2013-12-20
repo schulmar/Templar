@@ -1,7 +1,7 @@
 #ifndef SOURCEVIEWER_H
 #define SOURCEVIEWER_H
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 namespace Ui {
     class SourceViewer;
