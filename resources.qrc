@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="back">icons/back.png</file>
+        <file alias="fastforward">icons/fastforward.png</file>
+        <file alias="follow">icons/follow.png</file>
+        <file alias="forward">icons/forward.png</file>
+        <file alias="next">icons/next.png</file>
+        <file alias="prev">icons/prev.png</file>
+        <file alias="rewind">icons/rewind.png</file>
+        <file alias="stop">icons/stop.png</file>
+    </qresource>
+</RCC>
