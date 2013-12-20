@@ -87,9 +87,9 @@ void GraphHandler::colorize()
 {
     graph_t *graph = theGraph->getGraph();
     for (node_t* node = agfstnode(graph); node != NULL; node = agnxtnode(graph, node)) {
-        NodeId ndId = std::atoi(node->name);
+        NodeId ndId = std::atoi(agnameof(node));
 
-        theGraph->colorNode(node->name, colorOfNode(ndId));
+        theGraph->colorNode(agnameof(node), colorOfNode(ndId));
     }
 }
 
@@ -112,7 +112,8 @@ void GraphHandler::forward(const std::vector<TraceEntry> & entryVec)
     const TraceEntry &entry = entryVec.back();
     NodeId nodeId = entry.id;
 
-    graph_t* graph = changeGraph(nodeId);
+    //removed unused: graph_t* graph = ;
+    changeGraph(nodeId);
     colorize();
 
     handleEvent(entryVec.back());

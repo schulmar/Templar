@@ -19,6 +19,7 @@
 #include <QDebug>
 
 #include "qgraph.h"
+#include "qt_version_switch.h"
 
 const QColor ActiveColor = Qt::darkBlue;
 const double ActiveWidth = 3.0;
@@ -105,7 +106,7 @@ QGraph::wheelEvent(QWheelEvent* event)
 void
 QGraph::scaleView(qreal scaleFactor)
 {
-    qreal f = sqrt(matrix().det());
+    qreal f = sqrt(QMATRIX_DETERMINANT(matrix()));
 
     if (scaleFactor * f > 8.0)
         scaleFactor = 8.0 / f;
@@ -364,16 +365,19 @@ QGraph::renderGraph(graph_t* graph)
         painter.begin(&picture);
         drawLabel(ND_label(node), &painter);
         painter.end();
-
+        
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
         char *nodeText = agget(node, "label");
         if (!nodeText)
-            nodeText = node->name;
+            nodeText = agnameof(node);
+#pragma GCC diagnostic push
 
-        QNode* item = new QNode(makeShape(node), picture, node->name, nodeText, node);
+        QNode* item = new QNode(makeShape(node), picture, agnameof(node), nodeText, node);
 
         item->setPos(gToQ(ND_coord(node)));
 
-        if (activeNode == node->name){
+        if (activeNode == agnameof(node)){
             QPen pen(ActiveColor);
             pen.setWidth(ActiveWidth);
             item->setPen(pen);
@@ -461,7 +465,7 @@ QGraph::colorNode(const QString &name, const QColor& color)
     node->setBrush(brush);
     node->update();
 
-    agset(node->getNode(), "fillcolor", color.name().toAscii().data());
+    agset(node->getNode(), "fillcolor", Q_TO_C_STRING(color.name()));
 
     if(mFollow)
         centerOn(node);

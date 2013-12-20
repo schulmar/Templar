@@ -6,7 +6,7 @@
 
 INCLUDEPATH += 
 LIBS += -lgvc \
-    -lgraph \
+    -lcgraph \
     -lcdt
 
 QT += \

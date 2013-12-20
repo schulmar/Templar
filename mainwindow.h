@@ -19,7 +19,7 @@ namespace Templar{
     class DebugManager;
 }
 
-class Agnode_t;
+//class Agnode_t;
 class QImage;
 class QGraphicsScene;
 class Highlighter;
