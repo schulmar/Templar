@@ -11,6 +11,7 @@ namespace Detail {
 class Command
 {
 public:
+    virtual ~Command() {}
     virtual void apply(ListWidgetHandler *handler) = 0;
 };
 
