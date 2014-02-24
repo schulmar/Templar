@@ -10,7 +10,11 @@ The goal of this version is to be compatible to Qt4/5 and Graphviz 2.34.0 (using
 
 Licensing and Copyright
 =======================
-TODO
+
+There is no license yet (neither for Templight nor for Templar).
+As Templight will probably be incorporated into clang the LLVM/clang license is a candidate.
+
+Templar was created by Zoltán Borok-Nagy so he holds the copyright on it.
 
 Build
 =====
