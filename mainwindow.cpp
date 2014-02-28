@@ -214,13 +214,14 @@ void MainWindow::reset() {
 void MainWindow::filterActionClicked()
 {
     bool ok;
+    static QString last;
     QString text = QInputDialog::getText(this, tr("Filter Nodes"),
                                          tr("Enter RegExp:"), QLineEdit::Normal,
-                                         QRegExp::escape(activeNode), &ok);
-    if (ok && !text.isEmpty()){
+                                         activeNode.isEmpty() ? last : QRegExp::escape(activeNode), &ok);
+    if (ok && text != last){
         QRegExp regexp(text);
         ignoreList.append(regexp);
-
+        last = text;
         reset();
     }
 }
