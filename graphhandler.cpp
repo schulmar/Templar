@@ -17,9 +17,14 @@ inline QColor colorOfEntry(const TraceEntry& entry) {
 
 } // unnamed namespace
 
+GraphHandler::GraphHandler(QGraph *qGraph)
+    : theGraph(qGraph), gvc(gvContext(), gvFreeContext)
+{}
+
 void GraphHandler::handleEvent(const TraceEntry &entry)
 {
-    NodeId nodeId = entry.id;
+    changeGraph(entry);
+   /* NodeId nodeId = entry.id;
 
     changeGraph(nodeId);
 
@@ -29,7 +34,7 @@ void GraphHandler::handleEvent(const TraceEntry &entry)
     QColor newColor = colorOfEntry(entry);
     nodeColor[nodeId] = newColor;
 
-    theGraph->colorNode(QString::number(nodeId), newColor);
+    theGraph->colorNode(QString::number(nodeId), newColor);*/
 }
 
 void GraphHandler::undoEvent()
@@ -43,13 +48,13 @@ void GraphHandler::undoEvent()
     NodeId nodeId = undo.first;
     QColor color = undo.second;
 
-    changeGraph(nodeId);
+  //  changeGraph(nodeId);
 
     nodeColor[nodeId] = color;
     theGraph->colorNode(QString::number(nodeId), color);
 }
 
-void GraphHandler::reset()
+void GraphHandler::reset(const TraceEntry &entry)
 {
     undoStack.clear();
     nodeColor.clear();
@@ -62,16 +67,20 @@ void GraphHandler::inspect(const TraceEntry &entry)
     theGraph->centerOn(item);
 }
 
-graph_t* GraphHandler::changeGraph(const NodeId& nodeName)
+void GraphHandler::changeGraph(const TraceEntry &entry)
 {
-    graph_t* graph = nodeToGraph[nodeName].data();
+    GraphvizVisitor newVisitor(gvc);
+    FullTreeWalker<GraphvizVisitor> graphWalker;
+    TraceEntry dummy;
+    graphWalker.Apply(newVisitor.visit(nullptr,dummy,entry),entry,newVisitor);
+    currentGraph = newVisitor.actualGraph;
+//    graph_t* graph = nodeToGraph[nodeName].data();
 
-    if (theGraph->getGraph() != graph) {  
-        theGraph->renderGraph(gvc.data(), graph, "dot");
+//    if (theGraph->getGraph() != graph) {
+        theGraph->renderGraph(gvc.data(), currentGraph.data(), "dot");
         colorize();
-    }
+  //  }
 
-    return graph;
 }
 
 QColor GraphHandler::colorOfNode(const NodeId& nodeName)
@@ -113,7 +122,7 @@ void GraphHandler::forward(const std::vector<TraceEntry> & entryVec)
     NodeId nodeId = entry.id;
 
     //removed unused: graph_t* graph = ;
-    changeGraph(nodeId);
+    //changeGraph(nodeId);
     colorize();
 
     handleEvent(entryVec.back());

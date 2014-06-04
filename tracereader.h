@@ -12,18 +12,11 @@ namespace Templar {
 class TraceReader
 {
 public:
-    TraceReader() : entryCounter(0) {}
-
-    void addBuilder(Builder* builder);
+    TraceReader(TraceEntry &target)
+        : target(target), entryCounter(0) {}
 
     void build(QString fileName);
 
-    void completeEntry(TraceEntry &entry);
-
-    void clearIgnoreList() { ignoreList.clear(); }
-    void setIgnoreList(const QList<QRegExp>& list);
-
-    bool isIgnored(QString text);
 
     void setDirPath(const QString& path) {
         dirPath = path;
@@ -34,12 +27,10 @@ public:
     }
 
 private:
-    QList<Builder*> builders;
+    TraceEntry &target;
     std::stack<TraceEntry> traceEntryStack;
 
     QString dirPath;
-
-    QList<QRegExp> ignoreList;
 
     unsigned int entryCounter;
 };

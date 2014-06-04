@@ -1,7 +1,9 @@
 #include "listwidgethandler.h"
 #include "traceentry.h"
+#include "usedsourcefilemodel.h"
 
-#include <QListWidget>
+//#include <QListView>
+#include <QTableView>
 #include <QSharedPointer>
 
 namespace Templar {
@@ -16,7 +18,7 @@ public:
 };
 
 
-
+/*
 class AddCommand : public Command
 {
 public:
@@ -29,25 +31,50 @@ public:
 private:
     QListWidgetItem *item;
 };
+*/
 
 
-
-class TakeCommand : public Command
+/*class TakeCommand : public Command
 {
 public:
     void apply(ListWidgetHandler *handler) {
         QSharedPointer<QListWidgetItem> item(handler->takeItem());
         (void)item;
     }
-};
+};*/
 
 } // namespace Detail
+
+void ListWidgetHandler::inspect(const TraceEntry &entry)
+{
+    using namespace Detail;
+    QItemSelectionModel *m = view->selectionModel();
+    EntryListModelAdapter *newModel = new EntryListModelAdapter(view,entry);
+    QObject::connect(
+                usedFileModel,SIGNAL(dataChanged(QModelIndex,QModelIndex))
+                ,newModel,SLOT(fileFilterDataChanged(const QModelIndex&,const QModelIndex&))
+            );
+     view->setModel(newModel);
+     if(m != nullptr)
+        delete m;
+}
+
 
 void ListWidgetHandler::handleEvent(const TraceEntry &entry)
 {
     using namespace Detail;
+    QItemSelectionModel *m = view->selectionModel();
+     EntryListModelAdapter *newModel = new EntryListModelAdapter(view,entry);
 
-    if (entry.isBegin) {
+    QObject::connect(
+                usedFileModel,SIGNAL(dataChanged(QModelIndex,QModelIndex))
+                ,newModel,SLOT(fileFilterDataChanged(const QModelIndex&,const QModelIndex&))
+            );
+     view->setModel(newModel);
+     view->setSortingEnabled(true);
+     if(m != nullptr)
+        delete m;
+/*    if (entry.isBegin) {
         QListWidgetItem *item = makeItem(entry);
         addItem(item);
 
@@ -59,7 +86,7 @@ void ListWidgetHandler::handleEvent(const TraceEntry &entry)
 
         Command *command (new AddCommand(item));
         undoList.push_back(command);
-    }
+    }*/
 }
 
 void ListWidgetHandler::undoEvent()
@@ -75,43 +102,22 @@ void ListWidgetHandler::undoEvent()
     undo->apply(this);
 }
 
-void ListWidgetHandler::reset()
+void ListWidgetHandler::reset(const TraceEntry &entry)
 {
-    if (!(listWidget->count() == 0))
-        listWidget->clear();
+    handleEvent(entry);
+    /*if (navigationHistoryunt() == 0))
+        navigationHistoryr();
 
     if (!undoList.empty())
-        undoList.clear();
+        undoList.clear();*/
 }
-
+/*
 void ListWidgetHandler::addItem(QListWidgetItem *item)
 {
-    listWidget->addItem(item);
-    listWidget->scrollToItem(item);
+    navigationHistorytem(item);
+    navigationHistoryllToItem(item);
 }
-
-QListWidgetItem *ListWidgetHandler::takeItem()
-{
-    QListWidgetItem *item = listWidget->takeItem(listWidget->count() - 1);
-    return item;
-}
-
-QListWidgetItem* ListWidgetHandler::makeItem(const TraceEntry &entry) const
-{
-    QListWidgetItem *item = new QListWidgetItem(entry.context, listWidget);
-    item->setBackground(
-        (listWidget->count() % 2)?
-            Qt::white :
-            Qt::lightGray
-        );
-
-    QVariant data;
-    data.setValue(entry);
-
-    item->setData(Qt::UserRole, data);
-
-    return item;
-}
+*/
 
 void ListWidgetHandler::forward(const std::vector<TraceEntry> &entryVec)
 {

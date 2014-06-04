@@ -32,20 +32,20 @@ void EntryInfoHandler::inspect(const TraceEntry& entry)
 
 void EntryInfoHandler::showEntry(const TraceEntry &entry)
 {
-    entryInfo->setEventType((entry.isBegin)?"Begin":"End");
+ /*   entryInfo->setEventType((entry.isBegin)?"Begin":"End");
     entryInfo->setKind(entry.kind);
     entryInfo->setName(entry.context);
-    entryInfo->setFilePosition(entry.position);
+    entryInfo->setFilePosition(entry.position);*/
 }
 
 void EntryInfoHandler::reset()
 {
     undoStack.clear();
 
-    entryInfo->setEventType("");
+ /*   entryInfo->setEventType("");
     entryInfo->setKind("");
     entryInfo->setName("");
-    entryInfo->setFilePosition("");
+    entryInfo->setFilePosition("");*/
 }
 
 void EntryInfoHandler::forward(const std::vector<TraceEntry> &vec)

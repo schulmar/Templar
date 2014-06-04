@@ -17,6 +17,7 @@ namespace Ui
 
 namespace Templar{
     class DebugManager;
+    class UsedSourceFileModel;
 }
 
 //class Agnode_t;
@@ -25,8 +26,8 @@ class QGraphicsScene;
 class Highlighter;
 class CodeEditor;
 class QGraph;
-class QListWidget;
-class QListWidgetItem;
+class QTableView;
+class QTreeView;
 class EntryInfo;
 class StringListDialog;
 
@@ -55,7 +56,9 @@ private slots:
     void resetActionClicked();
     void breakpointActionClicked();
 
-    void listWidgetItemClicked(QListWidgetItem *item);
+    //void listWidgetItemClicked(QListWidgetItem *item);
+    void tableWidgetItemClicked(const QModelIndex & index);
+    void fileWidgetItemClicked(const QModelIndex &index);
 
 private:
     void init();
@@ -70,7 +73,7 @@ private:
     void showInformation(QString info = "");
     void setLayout(QString layout);
     void exportToPNG(QImage*, QGraphicsScene*, const QString&);
-
+    void openTrace(const QString &fileName);
 private:
     Ui::MainWindow *ui;
 
@@ -101,9 +104,11 @@ private:
     Templar::GraphHandler *graphHandler;
 
     QPointer<Highlighter> highlighter;
-    QMap<QString, QString> openedFiles;
+    Templar::UsedSourceFileModel *usedFiles;
 
-    QListWidget *listWidget;
+    //QListView *listWidget;
+    QTableView *tableWidget;
+    QTreeView *fileViewWidget;
 
     QList<QRegExp> ignoreList;
 };

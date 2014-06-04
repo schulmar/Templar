@@ -13,6 +13,7 @@
 #include "entryinfo.h"
 #include "entryinfohandler.h"
 #include "stringlistdialog.h"
+#include "usedsourcefilemodel.h"
 
 #include <algorithm>
 #include <QMessageBox>
@@ -23,14 +24,16 @@
 #include <QInputDialog>
 #include <QRegExp>
 #include <QDockWidget>
-#include <QListWidget>
+//#include <QListView>
+#include <QTableView>
+#include <QTreeView>
 #include <QSplitter>
 
 //TODO unused variable: static const int BigGraph = 200;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
-      highlighter(0)
+      highlighter(nullptr),usedFiles(nullptr)
 {
     init();
 }
@@ -40,6 +43,7 @@ void MainWindow::init()
     initGui();
     initManagerAndHandlers();
     makeConnections();
+    openTrace("/home/be/Workspace/spirit_x3_tests/src/monster2.cpp.memory.trace.xml");
 }
 
 void MainWindow::initGui() {
@@ -51,9 +55,15 @@ void MainWindow::initGui() {
 
     qGraph = new QGraph(this);
 
-    listWidget = new QListWidget(this);
+    //listWidget = new QListView(this);
+    tableWidget = new QTableView(this);
+    tableWidget->verticalHeader()->setVisible(false);
+    tableWidget->verticalHeader()->setDefaultSectionSize(20);
+    tableWidget->setSortingEnabled(true);
+    connect(tableWidget->horizontalHeader(),SIGNAL(sectionClicked(int)), tableWidget, SLOT(sortByColumn(int,)));
+  //  entryInfo = new EntryInfo(this);
 
-    entryInfo = new EntryInfo(this);
+    fileViewWidget = new QTreeView(this);
 
     QSplitter *topSplitter = new QSplitter(this);
     topSplitter->addWidget(codeEdit);
@@ -64,8 +74,9 @@ void MainWindow::initGui() {
     topSplitter->setSizes(sizes);
 
     QSplitter *bottomSplitter = new QSplitter(this);
-    bottomSplitter->addWidget(entryInfo);
-    bottomSplitter->addWidget(listWidget);
+//    bottomSplitter->addWidget(entryInfo);
+    bottomSplitter->addWidget(fileViewWidget);
+    bottomSplitter->addWidget(tableWidget);
 
     sizes.clear();
     sizes << 400 << 100;
@@ -74,7 +85,7 @@ void MainWindow::initGui() {
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     splitter->addWidget(topSplitter);
     splitter->addWidget(bottomSplitter);
-
+//    tableWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     sizes.clear();
     sizes << 400 << 200;
     splitter->setSizes(sizes);
@@ -134,8 +145,9 @@ void MainWindow::initManagerAndHandlers()
     debugManager = new DebugManager(this);
     debugManager->addEventHandler(graphHandler);
     debugManager->addEventHandler(new EditorHandler(codeEdit));
-    debugManager->addEventHandler(new ListWidgetHandler(listWidget));
-    debugManager->addEventHandler(new EntryInfoHandler(entryInfo));
+    //debugManager->addEventHandler(new ListWidgetHandler(listWidget));
+    debugManager->addEventHandler(new ListWidgetHandler(tableWidget));
+  //  debugManager->addEventHandler(new EntryInfoHandler(entryInfo));
 }
 
 void MainWindow::makeConnections() {
@@ -155,18 +167,36 @@ void MainWindow::makeConnections() {
 
     QObject::connect(qGraph, SIGNAL(nodeClicked(QString)), this, SLOT(nodeClicked(QString)));
 
-    QObject::connect(listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(listWidgetItemClicked(QListWidgetItem*)));
+    QObject::connect(tableWidget, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(tableWidgetItemClicked(const QModelIndex &)));
 
     QObject::connect(breakpointAction, SIGNAL(triggered()), this, SLOT(breakpointActionClicked()));
-}
 
-void MainWindow::listWidgetItemClicked(QListWidgetItem *item)
+    QObject::connect(fileViewWidget, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(fileWidgetItemClicked(const QModelIndex &)));
+}
+void MainWindow::tableWidgetItemClicked(const QModelIndex &index)
+{
+    using namespace Templar;
+    TraceEntry entry = reinterpret_cast<EntryListModelAdapter*>(tableWidget->model())->entry;
+
+    debugManager->selectRoot(entry.children.at(index.row()));
+}
+void MainWindow::fileWidgetItemClicked(const QModelIndex &index)
+{
+    using namespace Templar;
+
+    const SourceFileNode *selectedNode = static_cast<const SourceFileNode*>(index.internalPointer());
+    if(selectedNode->id!=std::numeric_limits<size_t>::max())
+    {
+        debugManager->gotoFile(selectedNode->id);
+    }
+}
+/*void MainWindow::listWidgetItemClicked(QListWidgetItem *item)
 {
     using namespace Templar;
     TraceEntry entry = item->data(Qt::UserRole).value<TraceEntry>();
 
     debugManager->inspect(entry);
-}
+}*/
 
 void MainWindow::breakpointActionClicked()
 {
@@ -193,19 +223,15 @@ void MainWindow::reset() {
 
     QString dirPath = currentFileName.left(currentFileName.lastIndexOf("/") + 1);
 
-    TraceReader reader;
+    TraceReader reader(debugManager->getEntryTarget());
     reader.setDirPath(dirPath);
-    reader.setIgnoreList(ignoreList);
 
     GraphvizBuilder graphvizBuilder;
     EntryVectorBuilder vecBuilder;
 
-    reader.addBuilder(&graphvizBuilder);
-    reader.addBuilder(&vecBuilder);
-
     reader.build(currentFileName);
 
-    debugManager->reset(vecBuilder.getTraceEntryVector());
+    debugManager->reset();
 
     graphHandler->setGvc(graphvizBuilder.getGvc());
     graphHandler->setNodeGraphMap(graphvizBuilder.getNodeGraphMap());
@@ -273,12 +299,14 @@ void MainWindow::on_actionOpen_trace_triggered()
 
     if (fileName.isEmpty())
         return;
+    openTrace(fileName);
 
+}
+void MainWindow::openTrace(const QString &fileName)
+{
     currentFileName = fileName;
-
     try {
         ignoreList.clear();
-        reset();
     } catch (Templar::FileException*) {
         QMessageBox::warning(this, tr("Error"), tr("Can't open trace file"));
         return;
@@ -287,7 +315,10 @@ void MainWindow::on_actionOpen_trace_triggered()
         return;
     }
 
-    QString srcFilename = currentFileName.left(currentFileName.lastIndexOf(".trace.xml"));
+    QString srcFilename = currentFileName.left(currentFileName.lastIndexOf(".memory.trace.xml"));
+    usedFiles = new Templar::UsedSourceFileModel(srcFilename+".filelist.trace");
+    debugManager->setUsedFileModel(usedFiles);
+
     QFile file(srcFilename);
     file.open(QIODevice::ReadOnly);
 
@@ -297,6 +328,8 @@ void MainWindow::on_actionOpen_trace_triggered()
     codeEdit->setPlainText(source);
     highlighter = new Highlighter(codeEdit->document());
 
+    fileViewWidget->setModel(usedFiles);
+    reset();
     showInformation();
 }
 

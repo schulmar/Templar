@@ -20,9 +20,9 @@ void EditorHandler::handleEvent(const TraceEntry &entry)
                 QColor(common::colors::BEGIN) :
                 QColor(common::colors::END);
 
-    highlightPos(entry.position, color);
+    highlightPos(entry, color);
 
-    undoList.push_back(std::make_pair(entry.position, color));
+//    undoList.push_back(std::make_pair(entry.position, color));
 }
 
 void EditorHandler::undoEvent()
@@ -35,16 +35,16 @@ void EditorHandler::undoEvent()
     if (undoList.empty())
         return;
 
-    highlightPos(undoList.back().first,
-                 undoList.back().second);
+    //highlightPos(undoList.back().first,
+    //             undoList.back().second);
 }
 
 void EditorHandler::inspect(const TraceEntry& entry)
 {
-    highlightPos(entry.position, Qt::yellow);
+    highlightPos(entry, Qt::yellow);
 }
 
-void EditorHandler::reset()
+void EditorHandler::reset(const TraceEntry &)
 {
     undoList.clear();
 }
@@ -58,7 +58,7 @@ void EditorHandler::forward(const std::vector<TraceEntry> &entryVec)
                     QColor(common::colors::BEGIN) :
                     QColor(common::colors::END);
 
-        undoList.push_back(std::make_pair(entry.position, color));
+       // undoList.push_back(std::make_pair(entry.position, color));
     }
 
     if (!entryVec.empty())
@@ -72,26 +72,26 @@ void EditorHandler::rewind(unsigned int count)
     undoList.erase(undoList.end() - count + 1, undoList.end());
     undoEvent();
 }
+void EditorHandler::gotoFile(const QString &filename)
+{
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    QString src(file.readAll());
+    editor->setPlainText(src);
+    editor->setDocumentTitle(filename);
+}
+void EditorHandler::highlightPos(const TraceEntry& entry, const QColor& color) {
 
-void EditorHandler::highlightPos(const QString& fileLoc, const QColor& color) {
-    QStringList fileLocation = fileLoc.split("|");
-
-    QString fileName = fileLocation[0];
-    int lineNo = fileLocation[1].toInt();
-    //TODO unused variable: int charNo = fileLocation[2].toInt();
-    // TODO: throw exception if conversion fails
-
-
-    QFile file(fileName);
+    QFile file(entry.sourcefile);
 
     file.open(QIODevice::ReadOnly);
 
     QString src(file.readAll());
 
     editor->setPlainText(src);
-    editor->setDocumentTitle(fileName);
+    editor->setDocumentTitle(entry.sourcefile);
 
-    editor->highlightLine(lineNo, color);
+    editor->highlightLine(entry.declarationBegin.line, color);
 }
 
 

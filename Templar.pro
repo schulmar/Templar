@@ -9,10 +9,7 @@ LIBS += -lgvc \
     -lcgraph \
     -lcdt
 
-QT += \
-    xml \
-    xmlpatterns \
-    core gui
+QT += core gui
 #check for Qt5
 contains(QT_VERSION, ^5\\..*) {
 QT += widgets
@@ -23,6 +20,8 @@ TARGET = Templar
 TEMPLATE = app
 
 CONFIG += debug
+
+QMAKE_CXXFLAGS += -std=c++11
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -41,7 +40,9 @@ SOURCES += main.cpp\
     builder.cpp \
     entryinfohandler.cpp \
     stringlistdialog.cpp \
-    qgraph.cpp
+    qgraph.cpp \
+    traceentry.cpp \
+    usedsourcefilemodel.cpp
 
 HEADERS  += mainwindow.h \
     tracereader.h \
@@ -61,7 +62,8 @@ HEADERS  += mainwindow.h \
     builder.h \
     entryinfohandler.h \
     stringlistdialog.h \
-    qgraph.h
+    qgraph.h \
+    usedsourcefilemodel.h
 
 FORMS    += mainwindow.ui \
     sourceviewer.ui \

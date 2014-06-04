@@ -17,6 +17,7 @@ class QRegExp;
 namespace Templar {
 
 class TemplateEventHandler;
+class UsedSourceFileModel;
 
 class DebugManager : public QObject
 {
@@ -28,17 +29,20 @@ public:
     int getEventCount() const;
 
     void inspect(const TraceEntry& entry);
+    void selectRoot(const TraceEntry&entry);
 
     void setBreakpoints(const QList<QRegExp>& breakpoints) {
         this->breakpoints = breakpoints;
     }
-
+    TraceEntry &getEntryTarget() { return traceEntryTarget; }
+    void gotoFile(size_t fileId);
+    void setUsedFileModel(UsedSourceFileModel *usedSourceFiles);
 public slots:
     void next();
     void prev();
     void forward();
     void rewind();
-    void reset(const std::vector<TraceEntry>& instHistory);
+    void reset();
 
 private:
     bool hasBreakpoint(const QString& str) const;
@@ -46,8 +50,9 @@ private:
 private:
 
     QList<TemplateEventHandler*> eventHandlers;
-
-    std::vector<TraceEntry> instantiationHistory;
+    std::vector<TraceEntry *> navigationHistory;
+    UsedSourceFileModel *usedFiles;
+    TraceEntry traceEntryTarget;
     unsigned int historyPos;
 
     QList<QRegExp> breakpoints;

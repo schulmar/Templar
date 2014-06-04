@@ -18,14 +18,14 @@ public:
 
     void handleEvent(const TraceEntry& entry);
     void undoEvent();
-    void reset();
-
+    void reset(const TraceEntry &entry);
+    void gotoFile(const QString &filename);
     void inspect(const TraceEntry& entry);
     void forward(const std::vector<TraceEntry> &entryVec);
     void rewind(unsigned int count);
 
 private:
-    void highlightPos(const QString& fileLoc, const QColor& color);
+    void highlightPos(const TraceEntry& entry, const QColor& color);
 
 private:
     CodeEditor *editor;

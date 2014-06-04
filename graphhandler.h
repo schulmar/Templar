@@ -26,13 +26,13 @@ public:
     typedef GraphvizBuilder::NodeId NodeId;
     typedef GraphvizBuilder::NodeIdToGraph NodeIdToGraph;
 
-    GraphHandler(QGraph *qGraph) : theGraph(qGraph) {}
+    GraphHandler(QGraph *qGraph);
     virtual ~GraphHandler() {}
 
     void handleEvent(const TraceEntry &entry);
     void undoEvent();
 
-    void reset();
+    void reset(const TraceEntry &entry);
 
     void inspect(const TraceEntry &entry);
 
@@ -49,12 +49,13 @@ public:
 
 private:
     QColor colorOfNode(const NodeId& nodeName);
-    graph_t* changeGraph(const NodeId& nodeName);
+    void changeGraph(const TraceEntry &entry);
     void colorize();
 
 private:
     QGraph *theGraph;
     QSharedPointer<GVC_t> gvc;
+    QSharedPointer<graph_t> currentGraph;
 
     NodeIdToGraph nodeToGraph;
     QHash<NodeId, QColor> nodeColor;

@@ -6,8 +6,8 @@
 
 #include <QSharedPointer>
 
-class QListWidget;
-class QListWidgetItem;
+class QTableView;
+class QAbstractListModel;
 
 namespace Templar {
 
@@ -20,24 +20,23 @@ namespace Detail {
 class ListWidgetHandler : public TemplateEventHandler
 {
 public:
-    ListWidgetHandler(QListWidget *listW) :
-        listWidget(listW) {}
+    ListWidgetHandler(QTableView *view) :
+        view(view) {}
 
     void handleEvent(const TraceEntry &entry);
+    void inspect(const TraceEntry &entry);
     void undoEvent();
-    void reset();
+    void reset(const TraceEntry &entry);
     void forward(const std::vector<TraceEntry> & entryVec);
     void rewind(unsigned int);
 
 public:
-    void addItem(QListWidgetItem *item);
-    QListWidgetItem* takeItem();
+ //   void addItem(QListWidgetItem *item);
+
+   // QListWidgetItem* makeItem(const TraceEntry& entry) const;
 
 private:
-    QListWidgetItem* makeItem(const TraceEntry& entry) const;
-
-private:
-    QListWidget *listWidget;
+    QTableView *view;
     std::vector<Detail::Command*> undoList;
 };
 

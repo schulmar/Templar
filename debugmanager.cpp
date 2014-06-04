@@ -3,7 +3,7 @@
 #include "tracereader.h"
 #include "common.h"
 #include "templateeventhandler.h"
-
+#include "usedsourcefilemodel.h"
 #include <QDir>
 #include <QXmlStreamReader>
 #include <QString>
@@ -14,17 +14,39 @@
 
 namespace Templar{
 
-DebugManager::DebugManager(QObject *parent) : QObject(parent)
+DebugManager::DebugManager(QObject *parent)
+    : QObject(parent), usedFiles(nullptr)
 {
+}
+
+void DebugManager::setUsedFileModel(UsedSourceFileModel *usedSourceFiles)
+{
+    usedFiles = usedSourceFiles;
+    for(int i=0;i<this->eventHandlers.size();++i)
+    {
+        this->eventHandlers.at(i)->SetUsedFileModel(usedSourceFiles);
+    }
+}
+
+void DebugManager::gotoFile(size_t fileId)
+{
+    if(usedFiles==nullptr)
+        return;
+    QMap<size_t, SourceFileNode*>::iterator found = usedFiles->nodeIdMap.find(fileId);
+    if(found==usedFiles->nodeIdMap.end())
+        return;
+
+    for(int i=0;i<this->eventHandlers.size();++i)
+        eventHandlers[i]->gotoFile((*found)->fullPath);
 }
 
 void DebugManager::next()
 {
-    if (historyPos >= instantiationHistory.size())
+    if (historyPos >= navigationHistory.size())
         return;
 
     for (int i = 0; i < this->eventHandlers.size(); ++i)
-        eventHandlers[i]->handleEvent(instantiationHistory[historyPos]);
+        eventHandlers[i]->handleEvent(*navigationHistory[historyPos]);
 
     ++historyPos;
 }
@@ -38,18 +60,21 @@ void DebugManager::prev(){
         eventHandlers[i]->undoEvent();
 }
 
-void DebugManager::reset(const std::vector<TraceEntry>& instHistory)
+void DebugManager::reset()
 {
-    instantiationHistory = instHistory;
+    navigationHistory.clear();
     historyPos = 0;
 
     for (int i = 0; i < this->eventHandlers.size(); ++i)
-        eventHandlers[i]->reset();
+    {
+        eventHandlers[i]->reset(traceEntryTarget);
+     //   eventHandlers[i]->handleEvent(traceEntryTarget);
+    }
 }
 
 int DebugManager::getEventCount() const
 {
-    return instantiationHistory.size();
+    return navigationHistory.size();
 }
 
 void DebugManager::addEventHandler(TemplateEventHandler *handler)
@@ -63,13 +88,18 @@ void DebugManager::inspect(const TraceEntry &entry)
         eventHandlers[i]->inspect(entry);
 }
 
+void DebugManager::selectRoot(const TraceEntry&entry)
+{
+    for (int i = 0; i < this->eventHandlers.size(); ++i)
+        eventHandlers[i]->handleEvent(entry);
+}
 void DebugManager::forward()
 {
     std::vector<TraceEntry> entryVec;
 
-    while (historyPos < instantiationHistory.size())
+    while (historyPos < navigationHistory.size())
     {
-        const TraceEntry& entry = instantiationHistory[historyPos++];
+        const TraceEntry& entry = *navigationHistory[historyPos++];
 
         entryVec.push_back(entry);
         if (hasBreakpoint(entry.context)) {
@@ -93,7 +123,7 @@ void DebugManager::rewind()
     {
         ++count;
 
-        const TraceEntry& entry = instantiationHistory[--historyPos];
+        const TraceEntry& entry = *navigationHistory[--historyPos];
         if (hasBreakpoint(entry.context) && count > 1) {
             breakPointActivated = true;
             break;
