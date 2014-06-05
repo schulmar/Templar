@@ -14,6 +14,7 @@
 #include "entryinfohandler.h"
 #include "stringlistdialog.h"
 #include "usedsourcefilemodel.h"
+#include "traceentry.h"
 
 #include <algorithm>
 #include <QMessageBox>
@@ -61,7 +62,9 @@ void MainWindow::initGui() {
     tableWidget->verticalHeader()->setDefaultSectionSize(20);
     tableWidget->setSortingEnabled(true);
     connect(tableWidget->horizontalHeader(),SIGNAL(sectionClicked(int)), tableWidget, SLOT(sortByColumn(int,)));
-  //  entryInfo = new EntryInfo(this);
+
+    entryProxyModel = new Templar::EntryListSortFilterProxy(this);
+    tableWidget->setModel(entryProxyModel);
 
     fileViewWidget = new QTreeView(this);
 
@@ -146,7 +149,7 @@ void MainWindow::initManagerAndHandlers()
     debugManager->addEventHandler(graphHandler);
     debugManager->addEventHandler(new EditorHandler(codeEdit));
     //debugManager->addEventHandler(new ListWidgetHandler(listWidget));
-    debugManager->addEventHandler(new ListWidgetHandler(tableWidget));
+    debugManager->addEventHandler(new ListWidgetHandler(entryProxyModel));
   //  debugManager->addEventHandler(new EntryInfoHandler(entryInfo));
 }
 
@@ -172,13 +175,15 @@ void MainWindow::makeConnections() {
     QObject::connect(breakpointAction, SIGNAL(triggered()), this, SLOT(breakpointActionClicked()));
 
     QObject::connect(fileViewWidget, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(fileWidgetItemClicked(const QModelIndex &)));
-}
+
+  }
 void MainWindow::tableWidgetItemClicked(const QModelIndex &index)
 {
     using namespace Templar;
-    TraceEntry entry = reinterpret_cast<EntryListModelAdapter*>(tableWidget->model())->entry;
+    QModelIndex entryModelIndex = entryProxyModel->mapToSource(index);
+    TraceEntry *entry = reinterpret_cast<TraceEntry*>(entryModelIndex.internalPointer());
 
-    debugManager->selectRoot(entry.children.at(index.row()));
+    debugManager->selectRoot(*entry);
 }
 void MainWindow::fileWidgetItemClicked(const QModelIndex &index)
 {
@@ -190,13 +195,6 @@ void MainWindow::fileWidgetItemClicked(const QModelIndex &index)
         debugManager->gotoFile(selectedNode->id);
     }
 }
-/*void MainWindow::listWidgetItemClicked(QListWidgetItem *item)
-{
-    using namespace Templar;
-    TraceEntry entry = item->data(Qt::UserRole).value<TraceEntry>();
-
-    debugManager->inspect(entry);
-}*/
 
 void MainWindow::breakpointActionClicked()
 {
@@ -318,6 +316,11 @@ void MainWindow::openTrace(const QString &fileName)
     QString srcFilename = currentFileName.left(currentFileName.lastIndexOf(".memory.trace.xml"));
     usedFiles = new Templar::UsedSourceFileModel(srcFilename+".filelist.trace");
     debugManager->setUsedFileModel(usedFiles);
+
+    QObject::connect(
+                usedFiles,SIGNAL(dataChanged(QModelIndex,QModelIndex))
+                ,entryProxyModel,SLOT(fileFilterDataChanged(const QModelIndex&,const QModelIndex&))
+            );
 
     QFile file(srcFilename);
     file.open(QIODevice::ReadOnly);

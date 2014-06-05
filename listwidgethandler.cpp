@@ -47,33 +47,25 @@ public:
 
 void ListWidgetHandler::inspect(const TraceEntry &entry)
 {
-    using namespace Detail;
-    QItemSelectionModel *m = view->selectionModel();
-    EntryListModelAdapter *newModel = new EntryListModelAdapter(view,entry);
-    QObject::connect(
-                usedFileModel,SIGNAL(dataChanged(QModelIndex,QModelIndex))
-                ,newModel,SLOT(fileFilterDataChanged(const QModelIndex&,const QModelIndex&))
-            );
-     view->setModel(newModel);
-     if(m != nullptr)
-        delete m;
+     using namespace Detail;
+
+    EntryListModelAdapter *oldModel = dynamic_cast<EntryListModelAdapter*>(proxyModel->sourceModel());
+    EntryListModelAdapter *newModel = new EntryListModelAdapter(proxyModel,entry);
+
+    proxyModel->setSourceModel(newModel);
+     delete oldModel;
 }
 
 
 void ListWidgetHandler::handleEvent(const TraceEntry &entry)
 {
     using namespace Detail;
-    QItemSelectionModel *m = view->selectionModel();
-     EntryListModelAdapter *newModel = new EntryListModelAdapter(view,entry);
 
-    QObject::connect(
-                usedFileModel,SIGNAL(dataChanged(QModelIndex,QModelIndex))
-                ,newModel,SLOT(fileFilterDataChanged(const QModelIndex&,const QModelIndex&))
-            );
-     view->setModel(newModel);
-     view->setSortingEnabled(true);
-     if(m != nullptr)
-        delete m;
+    EntryListModelAdapter *oldModel = dynamic_cast<EntryListModelAdapter*>(proxyModel->sourceModel());
+    EntryListModelAdapter *newModel = new EntryListModelAdapter(proxyModel,entry);
+
+     proxyModel->setSourceModel(newModel);
+     delete oldModel;
 /*    if (entry.isBegin) {
         QListWidgetItem *item = makeItem(entry);
         addItem(item);

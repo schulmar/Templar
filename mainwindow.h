@@ -18,6 +18,7 @@ namespace Ui
 namespace Templar{
     class DebugManager;
     class UsedSourceFileModel;
+    class EntryListSortFilterProxy;
 }
 
 //class Agnode_t;
@@ -105,6 +106,7 @@ private:
 
     QPointer<Highlighter> highlighter;
     Templar::UsedSourceFileModel *usedFiles;
+    Templar::EntryListSortFilterProxy *entryProxyModel;
 
     //QListView *listWidget;
     QTableView *tableWidget;

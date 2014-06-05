@@ -115,7 +115,7 @@ public:
     virtual int columnCount(const QModelIndex &) const { return 4; }
     virtual int rowCount(const QModelIndex &) const { return entry.children.size();}
     virtual QVariant data(const QModelIndex &index, int role) const;
-
+    virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
     void updateProxyData();
 
     const TraceEntry &entry;
@@ -129,7 +129,7 @@ public:
     EntryListSortFilterProxy(QObject *parent = 0);
 
 protected:
-     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
+     bool filterAcceptsRow(int sourceRow, const QModelIndex &) const;
      bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
 
 public slots:

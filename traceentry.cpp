@@ -13,17 +13,17 @@ TraceEntry::iterator::iterator(TraceEntry *first)
 
 TraceEntry *TraceEntry::iterator::moveToNextSibling(TraceEntry *entry)
 {
-  if(entry->parent!=nullptr)
-  {
-      QVector<TraceEntry>::iterator position = std::find_if(entry->parent->children.begin(),entry->parent->children.end(),
-                                        [&](TraceEntry &entry){ return &entry == currentEntry;});
-      position++;
-      if(position == entry->parent->children.end())
-          return moveToNextSibling(entry->parent);
-      else
-          return &(*position);
-  }
-  return nullptr;
+    if(entry->parent!=nullptr)
+    {
+        QVector<TraceEntry>::iterator position = std::find_if(entry->parent->children.begin(),entry->parent->children.end(),
+                                                              [&](TraceEntry &entry){ return &entry == currentEntry;});
+        position++;
+        if(position == entry->parent->children.end())
+            return moveToNextSibling(entry->parent);
+        else
+            return &(*position);
+    }
+    return nullptr;
 }
 
 TraceEntry::iterator& TraceEntry::iterator::operator++()
@@ -39,40 +39,28 @@ TraceEntry::iterator& TraceEntry::iterator::operator++()
 
 EntryListModelAdapter::EntryListModelAdapter(QObject *parent, const TraceEntry &entry)
     : QAbstractListModel(parent), entry(entry)
-    {
-        updateProxyData();
-    }
-void EntryListModelAdapter::updateProxyData()
-{
-    UsedFileMap &usedFiles = UsedSourceFileModel::nodeIdMap;
-    proxy.clear();
-    proxy.reserve(entry.children.size());
-    for(int i=0;i<entry.children.size();++i)
-    {
-        const TraceEntry *current = &entry.children.at(i);
-        UsedFileMap::iterator found = usedFiles.find(current->instantiation.fileId);
-        if(found != usedFiles.end())
-        {
-            if((*found)->visible)
-                proxy.push_back(&entry.children.at(i));
-        }
-    }
-    dataChanged(index(0,0),index());
-}
-/*
-void EntryListModelAdapter::sort(int column, Qt::SortOrder order)
-{
-    std::sort(
-                proxy.begin()
-                ,proxy.end()
-                ,[](const TraceEntry *a, const TraceEntry *b) { return a->memoryUsage < b->memoryUsage;}
-    );
-}
-*/
-void EntryListModelAdapter::fileFilterDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
 {
     updateProxyData();
 }
+void EntryListModelAdapter::updateProxyData()
+{
+    proxy.clear();
+    proxy.resize(entry.children.size());
+    for(int i=0;i<entry.children.size();++i)
+    {
+        proxy.at(i) = &entry.children.at(i);
+    }
+}
+
+QModelIndex EntryListModelAdapter::index(int row, int column, const QModelIndex &parent) const
+{
+
+    if(row < proxy.size())
+        return createIndex(row,column,(void*)(proxy.at(row)));
+    else
+        return QModelIndex();
+}
+
 QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
 {
     int row = index.row();
@@ -117,6 +105,31 @@ QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
 
 
     return QVariant();
+}
+
+EntryListSortFilterProxy::EntryListSortFilterProxy(QObject *parent)
+    : QSortFilterProxyModel(parent)
+{}
+
+bool EntryListSortFilterProxy::lessThan(const QModelIndex &left, const QModelIndex &right) const
+{
+    QVariant leftData = sourceModel()->data(left);
+    QVariant rightData = sourceModel()->data(right);
+    return leftData.toUInt() < rightData.toUInt();
+}
+bool EntryListSortFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &) const
+{
+    EntryListModelAdapter *psource = dynamic_cast<EntryListModelAdapter*>(sourceModel());
+    UsedFileMap &usedFiles = UsedSourceFileModel::nodeIdMap;
+    UsedFileMap::iterator found = usedFiles.find(psource->proxy[sourceRow]->instantiation.fileId);
+    if(found != usedFiles.end())
+        return (*found)->visible;
+    return false;
+}
+
+void EntryListSortFilterProxy::fileFilterDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+    invalidateFilter();
 }
 
 }

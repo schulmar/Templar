@@ -6,9 +6,7 @@
 
 #include <QSharedPointer>
 
-class QTableView;
-class QAbstractListModel;
-
+class QSortFilterProxyModel;
 namespace Templar {
 
 namespace Detail {
@@ -20,8 +18,8 @@ namespace Detail {
 class ListWidgetHandler : public TemplateEventHandler
 {
 public:
-    ListWidgetHandler(QTableView *view) :
-        view(view) {}
+    ListWidgetHandler(QSortFilterProxyModel *proxyModel) :
+        proxyModel(proxyModel) {}
 
     void handleEvent(const TraceEntry &entry);
     void inspect(const TraceEntry &entry);
@@ -36,7 +34,7 @@ public:
    // QListWidgetItem* makeItem(const TraceEntry& entry) const;
 
 private:
-    QTableView *view;
+    QSortFilterProxyModel *proxyModel;
     std::vector<Detail::Command*> undoList;
 };
 
