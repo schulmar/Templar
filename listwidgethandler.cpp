@@ -45,6 +45,17 @@ public:
 
 } // namespace Detail
 
+void ListWidgetHandler::selectRoot(const TraceEntry &entry)
+{
+    using namespace Detail;
+
+    EntryListModelAdapter *oldModel = dynamic_cast<EntryListModelAdapter*>(proxyModel->sourceModel());
+    EntryListModelAdapter *newModel = new EntryListModelAdapter(proxyModel,entry);
+
+    proxyModel->setSourceModel(newModel);
+    delete oldModel;
+}
+
 void ListWidgetHandler::inspect(const TraceEntry &entry)
 {
      using namespace Detail;

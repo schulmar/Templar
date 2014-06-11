@@ -18,6 +18,7 @@ public:
         usedFileModel = model;
     }
     virtual void handleEvent(const TraceEntry&) {}
+    virtual void selectRoot(const TraceEntry &) {}
     virtual void undoEvent() {}
     virtual void reset(const TraceEntry &) =0;
     virtual void inspect(const TraceEntry&) {}

@@ -21,7 +21,6 @@ class UsedSourceFileModel;
 
 class DebugManager : public QObject
 {
-    Q_OBJECT
 public:
     DebugManager(QObject *parent = 0);
 
@@ -29,7 +28,7 @@ public:
     int getEventCount() const;
 
     void inspect(const TraceEntry& entry);
-    void selectRoot(const TraceEntry&entry);
+    void selectRoot(const TraceEntry& entry);
 
     void setBreakpoints(const QList<QRegExp>& breakpoints) {
         this->breakpoints = breakpoints;
@@ -50,7 +49,9 @@ private:
 private:
 
     QList<TemplateEventHandler*> eventHandlers;
-    std::vector<TraceEntry *> navigationHistory;
+    std::vector<const TraceEntry *> navigationHistory;
+    std::vector<const TraceEntry *> rootHistory;
+
     UsedSourceFileModel *usedFiles;
     TraceEntry traceEntryTarget;
     unsigned int historyPos;

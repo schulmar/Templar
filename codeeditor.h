@@ -53,6 +53,9 @@ QT_END_NAMESPACE
 
 class LineNumberArea;
 
+namespace Templar {
+  struct SourceLocation;
+}
 //![codeeditordefinition]
 
 class CodeEditor : public QPlainTextEdit
@@ -66,6 +69,7 @@ public:
     int lineNumberAreaWidth();
 
     void highlightLine(int lineNo, QColor color);
+    void highlightRange(const Templar::SourceLocation &start, const Templar::SourceLocation &end, QColor color);
 
 protected:
     void resizeEvent(QResizeEvent *event);

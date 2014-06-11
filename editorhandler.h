@@ -16,6 +16,7 @@ class EditorHandler : public TemplateEventHandler
 public:
     EditorHandler(CodeEditor *editor);
 
+    void selectRoot(const TraceEntry & entry);
     void handleEvent(const TraceEntry& entry);
     void undoEvent();
     void reset(const TraceEntry &entry);

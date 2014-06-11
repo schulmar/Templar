@@ -21,6 +21,7 @@ public:
     ListWidgetHandler(QSortFilterProxyModel *proxyModel) :
         proxyModel(proxyModel) {}
 
+    void selectRoot(const TraceEntry &entry);
     void handleEvent(const TraceEntry &entry);
     void inspect(const TraceEntry &entry);
     void undoEvent();

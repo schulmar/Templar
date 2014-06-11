@@ -6,7 +6,7 @@
 namespace common {
     namespace colors{
         static const QString DEFAULT = "#DDDDFF";
-        static const QString BEGIN   = "#FF7700";
+        static const QString BEGIN   = "#FF0000";
         static const QString END     = "#00FF00";
         static const QString BLANK   = "#FFFFFF";
     } // namespace colors

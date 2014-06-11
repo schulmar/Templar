@@ -2,6 +2,7 @@
 #include "traceentry.h"
 #include "codeeditor.h"
 #include "highlighter.h"
+#include "usedsourcefilemodel.h"
 
 #include <QString>
 #include <QFile>
@@ -14,6 +15,10 @@ EditorHandler::EditorHandler(CodeEditor *editor)
 {
 }
 
+void EditorHandler::selectRoot(const TraceEntry &entry)
+{
+    handleEvent(entry);
+}
 void EditorHandler::handleEvent(const TraceEntry &entry)
 {
     QColor color = (entry.isBegin)?
@@ -22,7 +27,7 @@ void EditorHandler::handleEvent(const TraceEntry &entry)
 
     highlightPos(entry, color);
 
-//    undoList.push_back(std::make_pair(entry.position, color));
+    //    undoList.push_back(std::make_pair(entry.position, color));
 }
 
 void EditorHandler::undoEvent()
@@ -58,7 +63,7 @@ void EditorHandler::forward(const std::vector<TraceEntry> &entryVec)
                     QColor(common::colors::BEGIN) :
                     QColor(common::colors::END);
 
-       // undoList.push_back(std::make_pair(entry.position, color));
+        // undoList.push_back(std::make_pair(entry.position, color));
     }
 
     if (!entryVec.empty())
@@ -82,16 +87,19 @@ void EditorHandler::gotoFile(const QString &filename)
 }
 void EditorHandler::highlightPos(const TraceEntry& entry, const QColor& color) {
 
-    QFile file(entry.sourcefile);
+    UsedFileMap::iterator found = UsedSourceFileModel::nodeIdMap.find(entry.instantiation.fileId);
+    if(found != UsedSourceFileModel::nodeIdMap.end())
+    {
+        QFile file((*found)->fullPath);
 
-    file.open(QIODevice::ReadOnly);
+        file.open(QIODevice::ReadOnly);
 
-    QString src(file.readAll());
+        QString src(file.readAll());
 
-    editor->setPlainText(src);
-    editor->setDocumentTitle(entry.sourcefile);
-
-    editor->highlightLine(entry.declarationBegin.line, color);
+        editor->setPlainText(src);
+        editor->setDocumentTitle((*found)->fullPath);
+        editor->highlightRange(entry.instantiationBegin,entry.instantiationEnd,color);
+    }
 }
 
 

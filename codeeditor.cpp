@@ -41,6 +41,7 @@
 #include <QtGui>
 
 #include "codeeditor.h"
+#include "traceentry.h"
 
 //![constructor]
 
@@ -164,6 +165,40 @@ void CodeEditor::highlightLine(int lineNo, QColor color)
     }
 
     setExtraSelections(extraSelections);
+}
+
+void CodeEditor::highlightRange(const Templar::SourceLocation &start, const Templar::SourceLocation &end, QColor color)
+{
+    QList<QTextEdit::ExtraSelection> extraSelections;
+
+    if (!isReadOnly()) {
+  //      QTextEdit::ExtraSelection selection;
+
+        //QColor lineColor = color;
+
+//        selection.format.setBackground(lineColor);
+        //selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+
+        QTextCursor cursor(document());
+        cursor.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor,start.line-1);
+        cursor.movePosition(QTextCursor::Right,QTextCursor::MoveAnchor,start.col-1);
+        if(start.line != end.line)
+            cursor.movePosition(QTextCursor::Down,QTextCursor::KeepAnchor,end.line - start.line);
+        cursor.movePosition(QTextCursor::StartOfLine,QTextCursor::KeepAnchor,0);
+        cursor.movePosition(QTextCursor::Right,QTextCursor::KeepAnchor,end.col);
+
+        QTextCharFormat fmt = cursor.charFormat();
+        fmt.setBackground(color);
+        cursor.setCharFormat(fmt);
+        this->setTextCursor(cursor);
+        this->centerCursor();
+
+    //    selection.cursor = cursor;
+    //    selection.cursor.clearSelection();
+    //    extraSelections.append(selection);
+    }
+
+    //setExtraSelections(extraSelections);
 }
 
 //![extraAreaPaintEvent_0]

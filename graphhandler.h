@@ -29,7 +29,10 @@ public:
     GraphHandler(QGraph *qGraph);
     virtual ~GraphHandler() {}
 
+    void selectRoot(const TraceEntry &entry);
+
     void handleEvent(const TraceEntry &entry);
+
     void undoEvent();
 
     void reset(const TraceEntry &entry);
@@ -46,6 +49,11 @@ public:
     void setNodeGraphMap(const NodeIdToGraph& nodeToGr) {
         nodeToGraph = nodeToGr;
     }
+
+
+    void setCriticalPathThreshold(double value);
+    void enableCriticalPathFilter(bool enable);
+    void setMaxDepthValue(int value);
 
 private:
     QColor colorOfNode(const NodeId& nodeName);

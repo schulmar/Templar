@@ -21,6 +21,11 @@ GraphHandler::GraphHandler(QGraph *qGraph)
     : theGraph(qGraph), gvc(gvContext(), gvFreeContext)
 {}
 
+void GraphHandler::selectRoot(const TraceEntry &entry)
+{
+    changeGraph(entry);
+    nodeColor.clear();
+}
 void GraphHandler::handleEvent(const TraceEntry &entry)
 {
     changeGraph(entry);

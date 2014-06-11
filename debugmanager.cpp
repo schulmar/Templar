@@ -90,8 +90,10 @@ void DebugManager::inspect(const TraceEntry &entry)
 
 void DebugManager::selectRoot(const TraceEntry&entry)
 {
+    navigationHistory.clear();
+    rootHistory.push_back(&entry);
     for (int i = 0; i < this->eventHandlers.size(); ++i)
-        eventHandlers[i]->handleEvent(entry);
+        eventHandlers[i]->selectRoot(entry);
 }
 void DebugManager::forward()
 {
