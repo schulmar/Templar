@@ -5,13 +5,13 @@
 namespace Templar
 {
 
-TraceEntry::iterator::iterator(TraceEntry *first)
+TraceEntry::iterator::iterator(const TraceEntry *first)
     :currentEntry(first)
 {
 
 }
 
-TraceEntry *TraceEntry::iterator::moveToNextSibling(TraceEntry *entry)
+TraceEntry const *TraceEntry::iterator::moveToNextSibling(TraceEntry const *entry)
 {
     if(entry->parent!=nullptr)
     {
@@ -28,12 +28,15 @@ TraceEntry *TraceEntry::iterator::moveToNextSibling(TraceEntry *entry)
 
 TraceEntry::iterator& TraceEntry::iterator::operator++()
 {
+    if(currentEntry==nullptr)
+        return *this;
     if(currentEntry->children.empty())
     {
         currentEntry = moveToNextSibling(currentEntry);
     }
     else
         currentEntry = &currentEntry->children.front();
+    return *this;
 }
 
 

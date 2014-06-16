@@ -16,6 +16,8 @@
 #include "usedsourcefilemodel.h"
 #include "traceentry.h"
 
+#include "entryfiltersettings.h"
+
 #include <algorithm>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -82,7 +84,7 @@ void MainWindow::initGui() {
     bottomSplitter->addWidget(tableWidget);
 
     sizes.clear();
-    sizes << 400 << 100;
+    sizes << 400 << 400;
     bottomSplitter->setSizes(sizes);
 
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
@@ -90,7 +92,7 @@ void MainWindow::initGui() {
     splitter->addWidget(bottomSplitter);
 //    tableWidget->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
     sizes.clear();
-    sizes << 400 << 200;
+    sizes << 400 << 100;
     splitter->setSizes(sizes);
 
     setCentralWidget(splitter);
@@ -135,6 +137,9 @@ void MainWindow::initGui() {
     // reset
     resetAction = createAction("&Reset", "Ctrl+R", "Reset", this);
     ui->mainToolBar->addAction(resetAction);
+
+    ui->mainToolBar->addSeparator();
+    ui->mainToolBar->addWidget(new EntryFilterSettings(this));
 
     listDialog = new StringListDialog("Regexp", this);
 }

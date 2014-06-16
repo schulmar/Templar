@@ -8,25 +8,11 @@ EntryFilterSettings::EntryFilterSettings(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->maxDepthSpinBox,SIGNAL(valueChanged(int)),ui->maxDepthSlider,SLOT(setValue(int)));
     connect(ui->maxDepthSlider,SIGNAL(valueChanged(int)), ui->maxDepthSpinBox,SLOT(setValue(int)));
+    connect(ui->criticalPathThresholdHorizontalSlider,SIGNAL(valueChanged(int)), ui->criticalPathThresoldSpinBox, SLOT(setValue(int)));
+    connect(ui->criticalPathThresoldSpinBox,SIGNAL(valueChanged(int)), ui->criticalPathThresholdHorizontalSlider, SLOT(setValue(int)));
 }
 
 EntryFilterSettings::~EntryFilterSettings()
 {
     delete ui;
-}
-
-void EntryFilterSettings::on_maxDepthSpinBox_valueChanged(int arg1)
-{
-
-}
-
-void EntryFilterSettings::on_maxDepthSlider_valueChanged(int value)
-{
-
-}
-
-void EntryFilterSettings::on_enableCriticalPathFilterCheckBox_stateChanged(int arg1)
-{
-    ui->criticalPathThresholdHorizontalSlider->setEnabled(arg1>0);
-    ui->criticalPathThresoldDoubleSpinBox->setEnabled(arg1>0);
 }

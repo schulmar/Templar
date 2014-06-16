@@ -6,16 +6,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>114</height>
+    <width>767</width>
+    <height>44</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QHBoxLayout" name="horizontalLayout_3">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QCheckBox" name="enableFilterCheckBox">
+       <property name="text">
+        <string>Enable filter</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QSlider" name="maxDepthSlider">
        <property name="orientation">
@@ -32,23 +39,26 @@
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="enableCriticalPathFilterCheckBox">
-     <property name="text">
-      <string>Enable critical path filter</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="enableCriticalPathFilterCheckBox">
+       <property name="text">
+        <string>Critical path filter</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QSlider" name="criticalPathThresholdHorizontalSlider">
+       <property name="maximum">
+        <number>100</number>
+       </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="criticalPathThresoldDoubleSpinBox"/>
+      <widget class="QSpinBox" name="criticalPathThresoldSpinBox"/>
      </item>
     </layout>
    </item>

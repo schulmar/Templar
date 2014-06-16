@@ -28,7 +28,7 @@ void GraphHandler::selectRoot(const TraceEntry &entry)
 }
 void GraphHandler::handleEvent(const TraceEntry &entry)
 {
-    changeGraph(entry);
+//    changeGraph(entry);
    /* NodeId nodeId = entry.id;
 
     changeGraph(nodeId);
@@ -74,6 +74,7 @@ void GraphHandler::inspect(const TraceEntry &entry)
 
 void GraphHandler::changeGraph(const TraceEntry &entry)
 {
+    currentRootIterator = TraceEntry::iterator(&entry);
     GraphvizVisitor newVisitor(gvc);
     FullTreeWalker<GraphvizVisitor> graphWalker;
     TraceEntry dummy;

@@ -65,6 +65,7 @@ private:
     QSharedPointer<GVC_t> gvc;
     QSharedPointer<graph_t> currentGraph;
 
+    TraceEntry::iterator currentRootIterator;
     NodeIdToGraph nodeToGraph;
     QHash<NodeId, QColor> nodeColor;
 

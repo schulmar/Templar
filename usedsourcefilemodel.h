@@ -37,7 +37,7 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;
     int rowCount(const QModelIndex &parent) const;
-    int columnCount(const QModelIndex &parent) const { return 3; }
+    int columnCount(const QModelIndex &parent) const { return 1; }
     QVariant data(const QModelIndex &index, int role) const;
    // bool hasChildren(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);

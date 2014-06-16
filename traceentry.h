@@ -96,15 +96,22 @@ struct TraceEntry {
 
     struct iterator
     {
-        iterator(TraceEntry *first);
-        TraceEntry *operator->() { return currentEntry; }
+        iterator(TraceEntry const *first=nullptr);
+        TraceEntry const *operator->() { return currentEntry; }
 
-        TraceEntry *moveToNextSibling(TraceEntry *entry);
+        TraceEntry const *moveToNextSibling(TraceEntry const*entry);
         iterator& operator++();
 
-        TraceEntry *currentEntry;
+        bool operator==(const iterator &itr) const
+        { return itr.currentEntry == currentEntry; }
+        bool operator!=(const iterator &itr) const
+        { return !(*this==itr); }
+
+        TraceEntry const *currentEntry;
 
     };
+    static iterator end() { return iterator(); }
+    iterator begin() { return iterator(this); }
 };
 
 class EntryListModelAdapter : public QAbstractListModel

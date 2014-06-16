@@ -52,6 +52,7 @@ private:
     std::vector<const TraceEntry *> navigationHistory;
     std::vector<const TraceEntry *> rootHistory;
 
+    TraceEntry::iterator entryIterator;
     UsedSourceFileModel *usedFiles;
     TraceEntry traceEntryTarget;
     unsigned int historyPos;

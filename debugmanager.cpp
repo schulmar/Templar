@@ -42,13 +42,15 @@ void DebugManager::gotoFile(size_t fileId)
 
 void DebugManager::next()
 {
-    if (historyPos >= navigationHistory.size())
-        return;
+    ++entryIterator;
+    if(entryIterator!=TraceEntry::end())
+    {
+        navigationHistory.push_back(entryIterator.currentEntry);
+        historyPos = navigationHistory.size()-1;
+        for (int i = 0; i < this->eventHandlers.size(); ++i)
+            eventHandlers[i]->handleEvent(*entryIterator.currentEntry);
 
-    for (int i = 0; i < this->eventHandlers.size(); ++i)
-        eventHandlers[i]->handleEvent(*navigationHistory[historyPos]);
-
-    ++historyPos;
+    }
 }
 
 void DebugManager::prev(){
@@ -56,8 +58,9 @@ void DebugManager::prev(){
         return;
 
     --historyPos;
+    entryIterator = TraceEntry::iterator(navigationHistory[historyPos]);
     for (int i = 0; i < this->eventHandlers.size(); ++i)
-        eventHandlers[i]->undoEvent();
+        eventHandlers[i]->handleEvent(*entryIterator.currentEntry);
 }
 
 void DebugManager::reset()
@@ -92,6 +95,8 @@ void DebugManager::selectRoot(const TraceEntry&entry)
 {
     navigationHistory.clear();
     rootHistory.push_back(&entry);
+    entryIterator = TraceEntry::iterator(&entry);
+
     for (int i = 0; i < this->eventHandlers.size(); ++i)
         eventHandlers[i]->selectRoot(entry);
 }
