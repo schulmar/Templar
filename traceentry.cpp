@@ -7,6 +7,7 @@ namespace Templar
 
 TraceEntry::iterator::iterator(const TraceEntry *first)
     :currentEntry(first)
+    ,root(first)
 {
 
 }
@@ -15,13 +16,18 @@ TraceEntry const *TraceEntry::iterator::moveToNextSibling(TraceEntry const *entr
 {
     if(entry->parent!=nullptr)
     {
-        QVector<TraceEntry>::iterator position = std::find_if(entry->parent->children.begin(),entry->parent->children.end(),
-                                                              [&](TraceEntry &entry){ return &entry == currentEntry;});
+        QVector<traceEntryPtr>::iterator position = std::find_if(entry->parent->children.begin(),entry->parent->children.end(),
+                                                              [&](traceEntryPtr &e){ return e.data() == entry;});
         position++;
         if(position == entry->parent->children.end())
-            return moveToNextSibling(entry->parent);
+        {
+            if(entry == root)
+                return nullptr;
+            else
+               return moveToNextSibling(entry->parent);
+        }
         else
-            return &(*position);
+            return position->data();
     }
     return nullptr;
 }
@@ -35,7 +41,7 @@ TraceEntry::iterator& TraceEntry::iterator::operator++()
         currentEntry = moveToNextSibling(currentEntry);
     }
     else
-        currentEntry = &currentEntry->children.front();
+        currentEntry = currentEntry->children.front().data();
     return *this;
 }
 
@@ -51,7 +57,7 @@ void EntryListModelAdapter::updateProxyData()
     proxy.resize(entry.children.size());
     for(int i=0;i<entry.children.size();++i)
     {
-        proxy.at(i) = &entry.children.at(i);
+        proxy.at(i) = entry.children.at(i);
     }
 }
 
@@ -59,7 +65,7 @@ QModelIndex EntryListModelAdapter::index(int row, int column, const QModelIndex 
 {
 
     if(row < proxy.size())
-        return createIndex(row,column,(void*)(proxy.at(row)));
+        return createIndex(row,column,(void*)(proxy.at(row).data()));
     else
         return QModelIndex();
 }
@@ -88,22 +94,22 @@ QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
         switch(col)
         {
         case 0:
-            return entry.children.at(row).context;
+            return entry.children.at(row)->context;
         case 1:
-            return entry.children.at(row).sourcefile;
+            return entry.children.at(row)->sourcefile;
         case 2:
-            return QString::number(entry.children.at(row).memoryUsage);
+            return QString::number(entry.children.at(row)->memoryUsage);
         case 3:
-            return QString::number(entry.children.at(row).children.size());
+            return QString::number(entry.children.at(row)->children.size());
         }
     }
         break;
     case Qt::ToolTipRole:
     {
-        return entry.children.at(row).context;
+        return entry.children.at(row)->context;
     }
     case Qt::BackgroundRole:
-        return QBrush(backgrounds[entry.children.at(row).kind]);
+        return QBrush(backgrounds[entry.children.at(row)->kind]);
     }
 
 

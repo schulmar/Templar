@@ -17,7 +17,7 @@
 #include <QGraphicsSceneMouseEvent>
 
 #include <QDebug>
-
+#include "common.h"
 #include "qgraph.h"
 #include "qt_version_switch.h"
 
@@ -65,7 +65,7 @@ QGraph::init()
     scene->setItemIndexMethod(QGraphicsScene::BspTreeIndex);
     setScene(scene);
 
-    activeNode = "";
+    activeNode = -1;
 }
 
 
@@ -365,7 +365,7 @@ QGraph::renderGraph(graph_t* graph)
         painter.begin(&picture);
         drawLabel(ND_label(node), &painter);
         painter.end();
-        
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wwrite-strings"
         char *nodeText = agget(node, "label");
@@ -373,11 +373,11 @@ QGraph::renderGraph(graph_t* graph)
             nodeText = agnameof(node);
 #pragma GCC diagnostic push
 
-        QNode* item = new QNode(makeShape(node), picture, agnameof(node), nodeText, node);
+        QNode* item = new QNode(makeShape(node), picture, atoi(agnameof(node)), nodeText, node, atoi(agget(node,"nodeKind")));
 
         item->setPos(gToQ(ND_coord(node)));
 
-        if (activeNode == agnameof(node)){
+        if (activeNode == atoi(agnameof(node))){
             QPen pen(ActiveColor);
             pen.setWidth(ActiveWidth);
             item->setPen(pen);
@@ -445,7 +445,20 @@ QGraph::renderGraph(graph_t* graph)
         }
     }
 }
-
+void QGraph::colorizeUpToNode(int nodeId)
+{
+     for (int i = 0; i < nodeList.size(); ++i){
+         QNode *pNode = nodeList.at(i);
+         if(pNode->getId() > nodeId)
+         {
+           colorNode(pNode,common::colors::DEFAULT);
+         }
+         else
+         {
+             colorNode(pNode,common::colors::nodeColors[pNode->getKind()]);
+         }
+     }
+}
 void
 QGraph::colorAllNode(const QColor &color)
 {
@@ -457,26 +470,29 @@ QGraph::colorAllNode(const QColor &color)
 }
 
 void
-QGraph::colorNode(const QString &name, const QColor& color)
+QGraph::colorNode(const int &name, const QColor& color)
 {
-    
+
     QNode *node = getNodeById(name);
+    colorNode(node,color);
+    if(mFollow)
+        centerOn(node);
+}
+void QGraph::colorNode(QNode *node, const QColor &color)
+{
     QBrush brush(color);
     node->setBrush(brush);
     node->update();
 
     agset(node->getNode(), "fillcolor", Q_TO_C_STRING(color.name()));
-
-    if(mFollow)
-        centerOn(node);
 }
 
-QColor
+/*QColor
 QGraph::getColorOfNode(const QString &name) const
 {
     QNode *node = getNodeById(name);
     return node->brush().color();
-}
+}*/
 
 bool
 QGraph::follow(bool on)
@@ -487,7 +503,7 @@ QGraph::follow(bool on)
 }
 
 QNode*
-QGraph::getNodeById(const QString& id) const
+QGraph::getNodeById(const int& id) const
 {
     for (int i = 0; i < nodeList.size(); ++i){
         if (nodeList.at(i)->getId() == id){
@@ -517,12 +533,13 @@ QGraph::nodeClick(QNode *node)
 }
 
 
-QNode::QNode(const QPainterPath& path, const QPicture& picture, const QString id_, const QString &text_, node_t *node_)
+QNode::QNode(const QPainterPath& path, const QPicture& picture, const int id_, const QString &text_, node_t *node_, int kind_)
     : QGraphicsPathItem(path),
       picture(picture),
       text(text_),
       id(id_),
-      node(node_)
+      node(node_),
+      kind(kind_)
 {
 }
 

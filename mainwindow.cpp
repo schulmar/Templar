@@ -15,6 +15,7 @@
 #include "stringlistdialog.h"
 #include "usedsourcefilemodel.h"
 #include "traceentry.h"
+#include "colorpreferencesdialog.h"
 
 #include "entryfiltersettings.h"
 
@@ -31,8 +32,25 @@
 #include <QTableView>
 #include <QTreeView>
 #include <QSplitter>
+#include <QSettings>
 
 //TODO unused variable: static const int BigGraph = 200;
+
+namespace common { namespace colors {
+        QColor nodeColors[10];
+        QString colorNames[10] = {
+            "Instantiation",
+            "Default template argument instantiation",
+            "Default function argument instantiation",
+            "Explicit argument substitution",
+            "Deduced template argument substitution",
+            "Prior template argument substitution",
+            "Default template argument substitution",
+            "Exception specification instantiation",
+            "Memoization",
+            "Unknown"
+        };
+}}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow),
@@ -167,7 +185,7 @@ void MainWindow::makeConnections() {
 
     QObject::connect(rewindAction, SIGNAL(triggered()), debugManager, SLOT(rewind()) );
 
-    QObject::connect(followAction, SIGNAL(triggered(bool)), qGraph, SLOT(follow(bool)) );
+    QObject::connect(followAction, SIGNAL(triggered()), qGraph, SLOT(follow()) );
 
     QObject::connect(filterAction, SIGNAL(triggered()), this, SLOT(filterActionClicked()));
 
@@ -270,6 +288,13 @@ void MainWindow::resetActionClicked()
 
 MainWindow::~MainWindow()
 {
+    QSettings settings(QSettings::UserScope,"Templar2","Templar2");
+    settings.beginWriteArray("nodeColors");
+    for(int i=0;i<10;i++)
+    {
+        settings.setArrayIndex(i);
+        settings.setValue("color",common::colors::nodeColors[i].name());
+    }
     delete graphHandler;
     delete ui;
 }
@@ -431,4 +456,10 @@ void MainWindow::exportToPNG(QImage *image, QGraphicsScene* scene, const QString
     image->save(fileName,"PNG");
 
     showInformation("graph exported to png");
+}
+
+void MainWindow::on_actionNode_Colors_triggered()
+{
+    ColorPreferencesDialog dlg(this);
+    dlg.exec();
 }

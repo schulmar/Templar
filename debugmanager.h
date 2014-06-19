@@ -21,6 +21,7 @@ class UsedSourceFileModel;
 
 class DebugManager : public QObject
 {
+    Q_OBJECT
 public:
     DebugManager(QObject *parent = 0);
 

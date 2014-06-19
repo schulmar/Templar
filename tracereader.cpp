@@ -26,7 +26,7 @@ void TraceReader::build(QString fileName)
     QDataStream input(&file);
     input.setByteOrder(QDataStream::LittleEndian);
 
-    std::stack<TraceEntry *> childVectorStack;
+    std::stack<TraceEntry*> childVectorStack;
     childVectorStack.push(&target);
     int counter=0;
     while (!input.atEnd()) {
@@ -34,24 +34,24 @@ void TraceReader::build(QString fileName)
         input.readRawData(&entryHeader,1);
         if(entryHeader==1)
         {
-           TraceEntry newEntry {};
-           newEntry.id = counter++;
-           input.readRawData((char*)&newEntry.kind,4);
+           traceEntryPtr newEntry ( new TraceEntry{} );
+           newEntry->id = counter++;
+           input.readRawData((char*)&newEntry->kind,4);
            qint32 length;
            input>>length;
            QByteArray buffer(length, Qt::Uninitialized);
            input.readRawData(buffer.data(),length);
-           newEntry.context = QString(buffer);
+           newEntry->context = QString(buffer);
 
-           input>>newEntry.instantiation;
-           input>>newEntry.instantiationBegin;
-           input>>newEntry.instantiationEnd;
-           input>>newEntry.declarationBegin;
-           input>>newEntry.declarationEnd;
+           input>>newEntry->instantiation;
+           input>>newEntry->instantiationBegin;
+           input>>newEntry->instantiationEnd;
+           input>>newEntry->declarationBegin;
+           input>>newEntry->declarationEnd;
 
-           newEntry.parent = childVectorStack.top();
+           newEntry->parent = childVectorStack.top();
            childVectorStack.top()->children.push_back(newEntry);
-           childVectorStack.push(&childVectorStack.top()->children.last());
+           childVectorStack.push(childVectorStack.top()->children.last().data());
         }
         else if(entryHeader==0)
         {

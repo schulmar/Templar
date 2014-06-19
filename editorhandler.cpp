@@ -21,9 +21,7 @@ void EditorHandler::selectRoot(const TraceEntry &entry)
 }
 void EditorHandler::handleEvent(const TraceEntry &entry)
 {
-    QColor color = (entry.isBegin)?
-                QColor(common::colors::BEGIN) :
-                QColor(common::colors::END);
+    QColor color = QColor(common::colors::BEGIN);
 
     highlightPos(entry, color);
 
@@ -59,9 +57,7 @@ void EditorHandler::forward(const std::vector<TraceEntry> &entryVec)
     for (int i = 0; i < (int)entryVec.size() - 1; ++i)
     {
         const TraceEntry& entry = entryVec[i];
-        QColor color = (entry.isBegin)?
-                    QColor(common::colors::BEGIN) :
-                    QColor(common::colors::END);
+        QColor color = QColor(common::colors::BEGIN);
 
         // undoList.push_back(std::make_pair(entry.position, color));
     }

@@ -42,15 +42,22 @@ void DebugManager::gotoFile(size_t fileId)
 
 void DebugManager::next()
 {
-    ++entryIterator;
-    if(entryIterator!=TraceEntry::end())
+    if(!navigationHistory.empty() && historyPos<navigationHistory.size()-1)
     {
-        navigationHistory.push_back(entryIterator.currentEntry);
-        historyPos = navigationHistory.size()-1;
-        for (int i = 0; i < this->eventHandlers.size(); ++i)
-            eventHandlers[i]->handleEvent(*entryIterator.currentEntry);
-
+        historyPos++;
     }
+    else
+    {
+        ++entryIterator;
+        if(entryIterator!=TraceEntry::end())
+        {
+            navigationHistory.push_back(entryIterator.currentEntry);
+            historyPos = navigationHistory.size()-1;
+        }
+    }
+    for (int i = 0; i < this->eventHandlers.size(); ++i)
+        eventHandlers[i]->handleEvent(*navigationHistory[historyPos]);
+
 }
 
 void DebugManager::prev(){

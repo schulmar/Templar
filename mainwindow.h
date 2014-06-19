@@ -61,6 +61,8 @@ private slots:
     void tableWidgetItemClicked(const QModelIndex & index);
     void fileWidgetItemClicked(const QModelIndex &index);
 
+    void on_actionNode_Colors_triggered();
+
 private:
     void init();
     void initGui();

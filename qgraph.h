@@ -49,15 +49,18 @@ public:
     virtual void layout(const QString& layoutAlgorithm);
     virtual QGraphicsScene* getScene() { return scene; }
 
-    QColor getColorOfNode(const QString& id) const;
-    QNode* getNodeById(const QString& id) const;
+//    QColor getColorOfNode(const QString& id) const;
+    QNode* getNodeById(const int &id) const;
 
     void clearGraph();
 
     graph_t* getGraph() { return theGraph; }
 
+    void colorizeUpToNode(int nodeId);
+    void colorNode(QNode *pNode, const QColor &color);
+
 public slots:
-    void colorNode(const QString& nodeId, const QColor &color);
+    void colorNode(const int &nodeId, const QColor &color);
     void colorAllNode(const QColor& color);
     bool follow(bool on);
 
@@ -87,7 +90,7 @@ private:
     void scaleView(qreal scaleFactor);
 
     QGraphicsScene* scene;
-    QString activeNode;
+    int activeNode;
     QList<QNode*> nodeList;
     QRectF graphRect;
     bool mFollow;
@@ -122,8 +125,8 @@ class QNode : public QObject, public QGraphicsPathItem
 
 public:
 
-    QNode(const QPainterPath& path, const QPicture& picture, const QString id_,
-          const QString &text_, node_t *node_);
+    QNode(const QPainterPath& path, const QPicture& picture, const int id_,
+          const QString &text_, node_t *node_, int kind_);
 
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget);
 
@@ -131,8 +134,9 @@ public:
 
     QString getText() { return text; }
     void    setText(const QString &n) { text = n; }
-    QString getId() const { return id; }
+    int getId() const { return id; }
     node_t*    getNode() { return node; }
+    int getKind() const { return kind; }
 
 signals:
     void clicked(QNode *);
@@ -140,7 +144,8 @@ signals:
 private:
     QPicture picture;
     QString text;
-    QString id;
+    int id;
+    int kind;
 private:
     node_t *node;
 };

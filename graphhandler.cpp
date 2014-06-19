@@ -11,8 +11,7 @@ namespace Templar {
 namespace {
 
 inline QColor colorOfEntry(const TraceEntry& entry) {
-    return (entry.isBegin) ? QColor(common::colors::BEGIN)
-                           : QColor(common::colors::END);
+    return QColor(common::colors::BEGIN);
 }
 
 } // unnamed namespace
@@ -28,23 +27,12 @@ void GraphHandler::selectRoot(const TraceEntry &entry)
 }
 void GraphHandler::handleEvent(const TraceEntry &entry)
 {
-//    changeGraph(entry);
-   /* NodeId nodeId = entry.id;
-
-    changeGraph(nodeId);
-
-    QColor oldColor = colorOfNode(nodeId);
-    undoStack.push_back(std::make_pair(nodeId, oldColor));
-
-    QColor newColor = colorOfEntry(entry);
-    nodeColor[nodeId] = newColor;
-
-    theGraph->colorNode(QString::number(nodeId), newColor);*/
+    theGraph->colorizeUpToNode(entry.id);
 }
 
 void GraphHandler::undoEvent()
 {
-    if (undoStack.empty())
+   /* if (undoStack.empty())
         return;
 
     UndoInfo undo = undoStack.back();
@@ -56,7 +44,7 @@ void GraphHandler::undoEvent()
   //  changeGraph(nodeId);
 
     nodeColor[nodeId] = color;
-    theGraph->colorNode(QString::number(nodeId), color);
+    theGraph->colorNode(QString::number(nodeId), color);*/
 }
 
 void GraphHandler::reset(const TraceEntry &entry)
@@ -68,7 +56,7 @@ void GraphHandler::reset(const TraceEntry &entry)
 
 void GraphHandler::inspect(const TraceEntry &entry)
 {
-    QGraphicsItem *item = theGraph->getNodeById(QString::number(entry.id));
+    QGraphicsItem *item = theGraph->getNodeById(entry.id);
     theGraph->centerOn(item);
 }
 
@@ -100,12 +88,12 @@ QColor GraphHandler::colorOfNode(const NodeId& nodeName)
 
 void GraphHandler::colorize()
 {
-    graph_t *graph = theGraph->getGraph();
+/*    graph_t *graph = theGraph->getGraph();
     for (node_t* node = agfstnode(graph); node != NULL; node = agnxtnode(graph, node)) {
         NodeId ndId = std::atoi(agnameof(node));
 
         theGraph->colorNode(agnameof(node), colorOfNode(ndId));
-    }
+    }*/
 }
 
 void GraphHandler::forward(const std::vector<TraceEntry> & entryVec)

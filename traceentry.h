@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QSharedPointer>
 #include <QMap>
 #include <QMetaType>
 #include <QAbstractListModel>
@@ -27,6 +28,7 @@ struct SourceLocation
    int    col;
 };
 
+typedef QSharedPointer<TraceEntry> traceEntryPtr;
 
 struct TraceEntry {
 
@@ -76,11 +78,14 @@ struct TraceEntry {
       /// Added for Template debugging (TEMPLIGHT)
       /// We are _not_ instantiating a template because it is already
       /// instantiated.
-      Memoization
+      Memoization,
       // END TEMPLIGHT
+      Unknown
 
     } kind;
-    bool isBegin;
+
+    TraceEntry() : parent(nullptr), memoryUsage(0), id(-1), kind(Unknown) {}
+
     QString context;
     SourceLocation instantiation;
     SourceLocation instantiationBegin;
@@ -88,11 +93,10 @@ struct TraceEntry {
     SourceLocation declarationBegin;
     SourceLocation declarationEnd;
     QString sourcefile;
-    double time;
     unsigned int id;
-    std::size_t memoryUsage;
+    int64_t memoryUsage;
     TraceEntry *parent;
-    QVector<TraceEntry> children;
+    QVector<traceEntryPtr> children;
 
     struct iterator
     {
@@ -108,6 +112,7 @@ struct TraceEntry {
         { return !(*this==itr); }
 
         TraceEntry const *currentEntry;
+        TraceEntry const *root;
 
     };
     static iterator end() { return iterator(); }
@@ -126,7 +131,7 @@ public:
     void updateProxyData();
 
     const TraceEntry &entry;
-    std::vector<const TraceEntry*> proxy;
+    std::vector<traceEntryPtr> proxy;
 
 };
 class EntryListSortFilterProxy : public QSortFilterProxyModel
@@ -152,7 +157,7 @@ struct FullTreeWalker
     {
         for (unsigned int i = 0; i < root.children.size(); ++i)
         {
-            Apply(walker.visit(parent_data,root,root.children.at(i)),root.children.at(i),walker);
+            Apply(walker.visit(parent_data,root,*root.children.at(i)),*root.children.at(i),walker);
         }
     }
 };

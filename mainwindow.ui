@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>24</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -48,7 +48,14 @@
     </property>
     <addaction name="actionAbout_Templar"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionNode_Colors"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionOpen_trace">
@@ -112,6 +119,11 @@
   <action name="actionExport_to_PNG">
    <property name="text">
     <string>Export to PNG</string>
+   </property>
+  </action>
+  <action name="actionNode_Colors">
+   <property name="text">
+    <string>Node Colors</string>
    </property>
   </action>
  </widget>
