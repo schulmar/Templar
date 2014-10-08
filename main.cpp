@@ -10,8 +10,8 @@ int main(int argc, char *argv[])
     for(int i=0;i<10;i++)
     {
         settings.setArrayIndex(i);
-        common::colors::nodeColors[i] = QColor(settings.value("color",Qt::black).toString());
-
+        common::colors::nodeColors[i] =
+            QColor(settings.value("color", QColor(Qt::black)).toString());
     }
     settings.endArray();
     QApplication a(argc, argv);
