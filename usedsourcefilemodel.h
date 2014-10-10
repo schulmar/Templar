@@ -35,8 +35,9 @@ typedef QMap<size_t, SourceFileNode*> UsedFileMap;
 class UsedSourceFileModel : public QAbstractItemModel
 {
 public:
-    UsedSourceFileModel(const QString &fileName);
-    void Add(const QString &newPath );
+    explicit UsedSourceFileModel(const QString &fileName);
+    explicit UsedSourceFileModel(const std::vector<QString> &fileNames);
+    void Add(const QString &newPath, size_t fileId);
 
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;

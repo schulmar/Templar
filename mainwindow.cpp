@@ -34,6 +34,7 @@
 #include <QTreeView>
 #include <QSplitter>
 #include <QSettings>
+#include <QFileInfo>
 
 //TODO unused variable: static const int BigGraph = 200;
 
@@ -341,9 +342,21 @@ void MainWindow::openTrace(const QString &fileName)
     currentFileName = fileName;
     ignoreList.clear();
 
+    const char *memoryTraceExtension = ".memory.trace.xml";
+    const char *traceExtension = "trace.xml";
+    const char *fileListExtension = ".filelist.trace";
 
-    QString srcFilename = currentFileName.left(currentFileName.lastIndexOf(".memory.trace.xml"));
-    usedFiles = new Templar::UsedSourceFileModel(srcFilename+".filelist.trace");
+    QString srcFilename = currentFileName.left(
+        currentFileName.endsWith(memoryTraceExtension)
+            ? currentFileName.lastIndexOf(memoryTraceExtension)
+            : currentFileName.lastIndexOf(traceExtension));
+
+    QString fileListFilename = srcFilename + fileListExtension;
+    if(QFileInfo::exists(fileListFilename)) {
+        usedFiles = new Templar::UsedSourceFileModel(fileListFilename);
+    } else {
+        usedFiles = new Templar::UsedSourceFileModel(Templar::TraceReader::readSourceFilesFromXML(fileName));
+    }
     debugManager->setUsedFileModel(usedFiles);
 
     QObject::connect(

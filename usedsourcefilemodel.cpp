@@ -31,31 +31,38 @@ UsedSourceFileModel::UsedSourceFileModel(const QString &fileName)
         QByteArray buffer(length,Qt::Uninitialized);
         input.readRawData(buffer.data(),length);
         QString path(buffer);
-        QStringList components = path.split(QDir::separator(),QString::SkipEmptyParts);
-        SourceFileNode *currentNode = &root;
-        for(int i=0;i<components.size();++i)
-        {
-            SourceFileNode **found =
-            std::find_if(currentNode->children.begin(),currentNode->children.end(),
-                         [&](SourceFileNode *node){
-                                return node->name == components[i];
-                }
-                );
-            if(found == currentNode->children.end())
-            {
-                currentNode->children.append(new SourceFileNode(components[i],currentNode));
-                currentNode->children.back()->row = currentNode->children.size();
-                currentNode = currentNode->children.back();
-            }
-            else
-            {
-                currentNode = *found;
-            }
-        }
-        nodeIdMap.insert(fileId,currentNode);
-        currentNode->id = fileId;
-        currentNode->fullPath = path;
+        Add(path, fileId);
     }
+}
+
+UsedSourceFileModel::UsedSourceFileModel(const std::vector<QString> &fileNames) {
+    nodeIdMap.clear();
+    size_t fileId = 0;
+    for (auto const &path : fileNames) {
+        Add(path, fileId++);
+    }
+}
+
+void UsedSourceFileModel::Add(const QString &path, size_t fileId) {
+    QStringList components =
+        path.split(QDir::separator(), QString::SkipEmptyParts);
+    SourceFileNode *currentNode = &root;
+    for (int i = 0; i < components.size(); ++i) {
+        SourceFileNode **found = std::find_if(
+            currentNode->children.begin(), currentNode->children.end(),
+            [&](SourceFileNode *node) { return node->name == components[i]; });
+        if (found == currentNode->children.end()) {
+            currentNode->children.append(
+                new SourceFileNode(components[i], currentNode));
+            currentNode->children.back()->row = currentNode->children.size();
+            currentNode = currentNode->children.back();
+        } else {
+            currentNode = *found;
+        }
+    }
+    nodeIdMap.insert(fileId, currentNode);
+    currentNode->id = fileId;
+    currentNode->fullPath = path;
 }
 
 QModelIndex UsedSourceFileModel::index(int row, int column, const QModelIndex &parent) const

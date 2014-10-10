@@ -17,6 +17,12 @@ public:
 
     void build(QString fileName);
 
+    using SourceFiles = std::vector<QString>;
+    static SourceFiles readSourceFilesFromXML(const QString &fileName);
+
+    void buildFromXML(QString fileName);
+
+    void buildFromBinary(QString fileName);
 
     void setDirPath(const QString& path) {
         dirPath = path;
@@ -34,6 +40,8 @@ private:
 
     //todo: unused unsigned int entryCounter;
 };
+
+
 
 class FileException{};
 
