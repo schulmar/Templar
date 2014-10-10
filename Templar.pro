@@ -44,7 +44,8 @@ SOURCES += main.cpp\
     traceentry.cpp \
     usedsourcefilemodel.cpp \
     entryfiltersettings.cpp \
-    colorpreferencesdialog.cpp
+    colorpreferencesdialog.cpp \
+    settingsnames.cpp
 
 HEADERS  += mainwindow.h \
     tracereader.h \
@@ -67,7 +68,8 @@ HEADERS  += mainwindow.h \
     qgraph.h \
     usedsourcefilemodel.h \
     entryfiltersettings.h \
-    colorpreferencesdialog.h
+    colorpreferencesdialog.h \
+    settingsnames.h
 
 FORMS    += mainwindow.ui \
     sourceviewer.ui \

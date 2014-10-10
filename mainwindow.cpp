@@ -18,6 +18,7 @@
 #include "colorpreferencesdialog.h"
 
 #include "entryfiltersettings.h"
+#include "settingsnames.h"
 
 #include <algorithm>
 #include <QMessageBox>
@@ -64,7 +65,12 @@ void MainWindow::init()
     initGui();
     initManagerAndHandlers();
     makeConnections();
-    openTrace("/home/be/Workspace/spirit_x3_tests/src/monster2.cpp.memory.trace.xml");
+    QSettings settings;
+
+    QVariant lastOpenedTraceFile =
+        settings.value(Templar::Settings::Names::last_opened_trace_file);
+    if(!lastOpenedTraceFile.isNull())
+      openTrace(lastOpenedTraceFile.toString());
 }
 
 void MainWindow::initGui() {
@@ -333,15 +339,8 @@ void MainWindow::on_actionOpen_trace_triggered()
 void MainWindow::openTrace(const QString &fileName)
 {
     currentFileName = fileName;
-    try {
-        ignoreList.clear();
-    } catch (Templar::FileException*) {
-        QMessageBox::warning(this, tr("Error"), tr("Can't open trace file"));
-        return;
-    } catch (...) {
-        QMessageBox::warning(this, tr("Error"), tr("Can't build graph from trace file"));
-        return;
-    }
+    ignoreList.clear();
+
 
     QString srcFilename = currentFileName.left(currentFileName.lastIndexOf(".memory.trace.xml"));
     usedFiles = new Templar::UsedSourceFileModel(srcFilename+".filelist.trace");
@@ -362,7 +361,18 @@ void MainWindow::openTrace(const QString &fileName)
     highlighter = new Highlighter(codeEdit->document());
 
     fileViewWidget->setModel(usedFiles);
-    reset();
+    try {
+      reset();
+    } catch (Templar::FileException *) {
+      QMessageBox::warning(this, tr("Error"), tr("Can't open trace file"));
+      return;
+    } catch (...) {
+      QMessageBox::warning(this, tr("Error"),
+                           tr("Can't build graph from trace file"));
+      return;
+    }
+    QSettings().setValue(Templar::Settings::Names::last_opened_trace_file,
+                         fileName);
     showInformation();
 }
 

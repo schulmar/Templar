@@ -3,9 +3,14 @@
 #include <QColor>
 #include "mainwindow.h"
 #include "common.h"
+#include "settingsnames.h"
+
+
 int main(int argc, char *argv[])
 {
-    QSettings settings(QSettings::UserScope,"Templar2","Templar2");
+    QCoreApplication::setOrganizationName(Templar::Settings::OrganizationName);
+    QCoreApplication::setApplicationName(Templar::Settings::ApplicationName);
+    QSettings settings;
     settings.beginReadArray("nodeColors");
     for(int i=0;i<10;i++)
     {
