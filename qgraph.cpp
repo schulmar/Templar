@@ -538,8 +538,8 @@ QNode::QNode(const QPainterPath& path, const QPicture& picture, const int id_, c
       picture(picture),
       text(text_),
       id(id_),
-      node(node_),
-      kind(kind_)
+      kind(kind_),
+      node(node_)
 {
 }
 

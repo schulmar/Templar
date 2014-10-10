@@ -11,11 +11,15 @@ namespace Templar {
 struct SourceFileNode
 {
     SourceFileNode()
-        : parent(nullptr), id(std::numeric_limits<size_t>::max()), row(-1), visible(true)
+        : parent(nullptr), visible(true), id(std::numeric_limits<size_t>::max()),
+          row(-1)
     {}
-    SourceFileNode(const QString &name,SourceFileNode *parent)
-        : name(name), parent(parent), id(std::numeric_limits<size_t>::max()), row(-1), visible(true)
+
+    SourceFileNode(const QString &name, SourceFileNode *parent)
+        : parent(parent), name(name), visible(true),
+          id(std::numeric_limits<size_t>::max()), row(-1)
     {}
+
     SourceFileNode *parent;
     QString name;
     QString fullPath;
@@ -37,7 +41,7 @@ public:
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;
     int rowCount(const QModelIndex &parent) const;
-    int columnCount(const QModelIndex &parent) const { return 1; }
+    int columnCount(const QModelIndex &/*parent*/) const { return 1; }
     QVariant data(const QModelIndex &index, int role) const;
    // bool hasChildren(const QModelIndex &index) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);

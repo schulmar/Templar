@@ -13,7 +13,7 @@ class TraceReader
 {
 public:
     TraceReader(TraceEntry &target)
-        : target(target), entryCounter(0) {}
+        : target(target)/*todo: unused, entryCounter(0)*/ {}
 
     void build(QString fileName);
 
@@ -32,7 +32,7 @@ private:
 
     QString dirPath;
 
-    unsigned int entryCounter;
+    //todo: unused unsigned int entryCounter;
 };
 
 class FileException{};

@@ -54,13 +54,14 @@ void EditorHandler::reset(const TraceEntry &)
 
 void EditorHandler::forward(const std::vector<TraceEntry> &entryVec)
 {
+    /*
     for (int i = 0; i < (int)entryVec.size() - 1; ++i)
     {
         const TraceEntry& entry = entryVec[i];
         QColor color = QColor(common::colors::BEGIN);
-
         // undoList.push_back(std::make_pair(entry.position, color));
     }
+    */
 
     if (!entryVec.empty())
     {

@@ -30,7 +30,7 @@ void EntryInfoHandler::inspect(const TraceEntry& entry)
     showEntry(entry);
 }
 
-void EntryInfoHandler::showEntry(const TraceEntry &entry)
+void EntryInfoHandler::showEntry(const TraceEntry &/*entry*/)
 {
  /*   entryInfo->setEventType((entry.isBegin)?"Begin":"End");
     entryInfo->setKind(entry.kind);

@@ -7,12 +7,14 @@
 namespace Templar {
 
 struct TraceEntry;
-struct UsedSourceFileModel;
+class UsedSourceFileModel;
 
 class TemplateEventHandler
 {
 public:
     TemplateEventHandler() : usedFileModel(nullptr) {}
+    virtual ~TemplateEventHandler() {}
+
     void SetUsedFileModel(UsedSourceFileModel *model)
     {
         usedFileModel = model;

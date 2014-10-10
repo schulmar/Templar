@@ -17,6 +17,7 @@ typedef QMap<size_t,SourceFileNode*> UsedFileMap;
 
 struct AbstractEntryWalker
 {
+    virtual ~AbstractEntryWalker() {}
     virtual void *visit(const TraceEntry &parent, const TraceEntry &currentNode);
 };
 
@@ -84,7 +85,7 @@ struct TraceEntry {
 
     } kind;
 
-    TraceEntry() : parent(nullptr), memoryUsage(0), id(-1), kind(Unknown) {}
+    TraceEntry() : kind(Unknown), id(-1), memoryUsage(0), parent(nullptr) {}
 
     QString context;
     SourceLocation instantiation;
@@ -155,7 +156,7 @@ struct FullTreeWalker
     typedef typename EntryWalker::node_data node_data;
     node_data Apply(node_data parent_data, const TraceEntry &root, EntryWalker &walker)
     {
-        for (unsigned int i = 0; i < root.children.size(); ++i)
+        for (int i = 0; i < (int)root.children.size(); ++i)
         {
             Apply(walker.visit(parent_data,root,*root.children.at(i)),*root.children.at(i),walker);
         }

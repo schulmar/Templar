@@ -60,7 +60,7 @@ void GraphvizBuilder::initGraph()
     actualGraph = QSharedPointer<graph_t> (graphPtr, agclose);
 }
 
-void GraphvizBuilder::traceEntry(const TraceEntry &entry)
+void GraphvizBuilder::traceEntry(const TraceEntry &/*entry*/)
 {
 }
 
@@ -121,8 +121,9 @@ GraphvizVisitor::GraphvizVisitor(QSharedPointer<GVC_t> &gvc)
 
 }
 
-node_t *GraphvizVisitor::visit(node_t *parent_data, const TraceEntry &parent, const TraceEntry &current)
-{
+node_t *GraphvizVisitor::visit(node_t *parent_data,
+                               const TraceEntry & /*parent*/,
+                               const TraceEntry &current) {
    std::string idStr = lexical_cast<std::string>(current.id);
 
     node_t* node = agnode(actualGraph.data(),

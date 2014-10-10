@@ -12,7 +12,8 @@ namespace Templar {
 class EntryInfoHandler : public TemplateEventHandler
 {
 public:
-    EntryInfoHandler(EntryInfo *entryInfo) : entryInfo(entryInfo) {}
+    EntryInfoHandler(EntryInfo */*entryInfo*/) /*todo: unused : entryInfo(entryInfo)*/ {}
+    virtual ~EntryInfoHandler() {}
 
     void handleEvent(const TraceEntry &entry);
     void undoEvent();
@@ -25,7 +26,7 @@ private:
     void showEntry(const TraceEntry &entry);
 
 private:
-    EntryInfo *entryInfo;
+    //todo: unused EntryInfo *entryInfo;
 
     std::vector<TraceEntry> undoStack;
 };

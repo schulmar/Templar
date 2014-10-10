@@ -10,7 +10,7 @@ namespace Templar {
 
 namespace {
 
-inline QColor colorOfEntry(const TraceEntry& entry) {
+inline QColor colorOfEntry(const TraceEntry& /*entry*/) {
     return QColor(common::colors::BEGIN);
 }
 
@@ -47,7 +47,7 @@ void GraphHandler::undoEvent()
     theGraph->colorNode(QString::number(nodeId), color);*/
 }
 
-void GraphHandler::reset(const TraceEntry &entry)
+void GraphHandler::reset(const TraceEntry &/*entry*/)
 {
     undoStack.clear();
     nodeColor.clear();
@@ -112,8 +112,8 @@ void GraphHandler::forward(const std::vector<TraceEntry> & entryVec)
 
     theGraph->follow(follow);
 
-    const TraceEntry &entry = entryVec.back();
-    NodeId nodeId = entry.id;
+    //const TraceEntry &entry = entryVec.back();
+    //NodeId nodeId = entry.id;
 
     //removed unused: graph_t* graph = ;
     //changeGraph(nodeId);

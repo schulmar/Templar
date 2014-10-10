@@ -61,10 +61,10 @@ void EntryListModelAdapter::updateProxyData()
     }
 }
 
-QModelIndex EntryListModelAdapter::index(int row, int column, const QModelIndex &parent) const
-{
+QModelIndex EntryListModelAdapter::index(int row, int column,
+                                         const QModelIndex & /*parent*/) const {
 
-    if(row < proxy.size())
+    if(row < (int)proxy.size())
         return createIndex(row,column,(void*)(proxy.at(row).data()));
     else
         return QModelIndex();
@@ -136,8 +136,8 @@ bool EntryListSortFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex
     return false;
 }
 
-void EntryListSortFilterProxy::fileFilterDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
-{
+void EntryListSortFilterProxy::fileFilterDataChanged(
+    const QModelIndex & /*topLeft*/, const QModelIndex & /*bottomRight*/) {
     invalidateFilter();
 }
 

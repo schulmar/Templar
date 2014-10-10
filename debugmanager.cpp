@@ -15,7 +15,7 @@
 namespace Templar{
 
 DebugManager::DebugManager(QObject *parent)
-    : QObject(parent), usedFiles(nullptr)
+    : QObject(parent), usedFiles(nullptr), historyPos(0)
 {
 }
 

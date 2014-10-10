@@ -15,6 +15,7 @@ QDataStream &operator>>(QDataStream &input, SourceLocation &location)
     location.fileId = static_cast<size_t>(fileId);
     input>>location.line;
     input>>location.col;
+    return input;
 }
 void TraceReader::build(QString fileName)
 {
