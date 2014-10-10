@@ -160,6 +160,8 @@ struct FullTreeWalker
         {
             Apply(walker.visit(parent_data,root,*root.children.at(i)),*root.children.at(i),walker);
         }
+        // todo: why not void? the return value is never used
+        return node_data();
     }
 };
 /*
