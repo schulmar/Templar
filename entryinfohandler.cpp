@@ -38,7 +38,7 @@ void EntryInfoHandler::showEntry(const TraceEntry &/*entry*/)
     entryInfo->setFilePosition(entry.position);*/
 }
 
-void EntryInfoHandler::reset()
+void EntryInfoHandler::reset(const TraceEntry& /*entry*/)
 {
     undoStack.clear();
 

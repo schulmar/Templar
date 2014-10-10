@@ -15,12 +15,12 @@ public:
     EntryInfoHandler(EntryInfo */*entryInfo*/) /*todo: unused : entryInfo(entryInfo)*/ {}
     virtual ~EntryInfoHandler() {}
 
-    void handleEvent(const TraceEntry &entry);
-    void undoEvent();
-    void reset();
-    void inspect(const TraceEntry& entry);
-    void forward(const std::vector<TraceEntry> &vec);
-    void rewind(unsigned int);
+    void handleEvent(const TraceEntry &entry) override;
+    void undoEvent() override;
+    void reset(const TraceEntry& entry) override;
+    void inspect(const TraceEntry& entry) override;
+    void forward(const std::vector<TraceEntry> &vec) override;
+    void rewind(unsigned int) override;
 
 private:
     void showEntry(const TraceEntry &entry);
