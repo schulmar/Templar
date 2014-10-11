@@ -22,6 +22,12 @@ public:
 
     void buildFromXML(QString fileName);
 
+#if YAML_TRACEFILE_SUPPORT
+    static SourceFiles readSourceFilesFromYAML(const QString &fileName);
+
+    void buildFromYAML(QString fileName);
+#endif
+
     void buildFromBinary(QString fileName);
 
     void setDirPath(const QString& path) {

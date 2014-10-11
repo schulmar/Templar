@@ -23,6 +23,9 @@ CONFIG += debug
 
 QMAKE_CXXFLAGS += -std=c++11
 
+DEFINES += YAML_TRACEFILE_SUPPORT=1
+LIBS += -lyaml-cpp
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     tracereader.cpp \

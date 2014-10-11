@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QXmlStreamReader>
 #include <cassert>
+#include <yaml-cpp/yaml.h>
 
 #include "tracereader.h"
 #include "traceentry.h"
@@ -23,6 +24,10 @@ QDataStream &operator>>(QDataStream &input, SourceLocation &location)
 void TraceReader::build(QString fileName) {
     if (fileName.endsWith("xml")) {
         buildFromXML(fileName);
+#if YAML_TRACEFILE_SUPPORT
+    } else if (fileName.endsWith("yaml")) {
+        buildFromYAML(fileName);
+#endif
     } else {
         buildFromBinary(fileName);
     }
@@ -36,20 +41,21 @@ static const char* Kind = "Kind";
 //static const char* TimeStamp = "TimeStamp";
 static const char* Memory = "MemoryUsage";
 
-struct SourceFileManagerAccumulator {
+struct SourceFileLocation {
+    QString filePath;
+    int line, column;
+};
 
-    SourceFileManagerAccumulator(QString dirPath) : dirPath(dirPath) {}
+struct SourceFileIdAccumulator {
 
-    SourceLocation parsePosition(QXmlStreamReader &xml) {
-        assert(xml.name().toString() == Position);
-        auto components = xml.readElementText().split('|');
-        QFileInfo fileInfo(components[0]);
+    SourceFileIdAccumulator(QString dirPath) : dirPath(dirPath) {}
+
+    SourceLocation addLocation(SourceFileLocation const &location) {
+        QFileInfo fileInfo(location.filePath);
         if(fileInfo.isRelative()) {
-          fileInfo = QDir(dirPath).filePath(components[0]);
+          fileInfo = QDir(dirPath).filePath(location.filePath);
         }
         QString sourceFile = fileInfo.canonicalFilePath();
-        int line = components[1].toInt();
-        int col = components[2].toInt();
         auto iterator = sourceFileIds.find(sourceFile);
         if (iterator == sourceFileIds.end()) {
             iterator =
@@ -57,13 +63,20 @@ struct SourceFileManagerAccumulator {
                                                     sourceFiles.size())).first;
             sourceFiles.push_back(sourceFile);
         }
-        return SourceLocation{iterator->second, line, col};
+        return SourceLocation{iterator->second, location.line, location.column};
     }
 
     TraceReader::SourceFiles sourceFiles;
     std::map<QString, size_t> sourceFileIds;
     QString dirPath;
 };
+
+SourceFileLocation locationFromXML(QXmlStreamReader &xml) {
+  assert(xml.name().toString() == Position);
+  auto components = xml.readElementText().split('|');
+  return SourceFileLocation{components[0], components[1].toInt(),
+                            components[2].toInt()};
+}
 
 TraceReader::SourceFiles
 TraceReader::readSourceFilesFromXML(const QString &fileName) {
@@ -72,7 +85,7 @@ TraceReader::readSourceFilesFromXML(const QString &fileName) {
         throw FileException();
     }
     QXmlStreamReader xml(&file);
-    SourceFileManagerAccumulator sourceFilesAccumulator(
+    SourceFileIdAccumulator sourceFilesAccumulator(
         QFileInfo(fileName).dir().path());
 
     while (!xml.atEnd()) {
@@ -83,7 +96,7 @@ TraceReader::readSourceFilesFromXML(const QString &fileName) {
             do {
                 xml.readNext();
                 if (xml.name().toString() == Position && xml.isStartElement()) {
-                    sourceFilesAccumulator.parsePosition(xml);
+                    sourceFilesAccumulator.addLocation(locationFromXML(xml));
                 }
             } while (xml.name().toString() != entryType);
         }
@@ -116,7 +129,7 @@ void TraceReader::buildFromXML(QString fileName) {
     }
     QXmlStreamReader xml(&file);
 
-    SourceFileManagerAccumulator sourceFilesAccumulator(dirPath);
+    SourceFileIdAccumulator sourceFilesAccumulator(dirPath);
 
     std::stack<TraceEntry *> childVectorStack;
     childVectorStack.push(&target);
@@ -139,7 +152,8 @@ void TraceReader::buildFromXML(QString fileName) {
                     } else if (xml.name().toString() == Position &&
                                xml.isStartElement()) {
                         newEntry->instantiation =
-                            sourceFilesAccumulator.parsePosition(xml);
+                            sourceFilesAccumulator.addLocation(
+                                locationFromXML(xml));
                         newEntry->instantiationEnd =
                             newEntry->instantiationBegin =
                                 newEntry->instantiation;
@@ -172,6 +186,72 @@ void TraceReader::buildFromXML(QString fileName) {
         }
     }
 }
+
+#if YAML_TRACEFILE_SUPPORT
+
+TraceReader::SourceFiles
+TraceReader::readSourceFilesFromYAML(const QString &fileName) {
+    auto document = YAML::LoadFile(fileName.toStdString());
+    SourceFileIdAccumulator sourceFilesAccumulator(
+        QFileInfo(fileName).dir().path());
+
+    for (auto const &node : document) {
+        if (node.Type() != YAML::NodeType::Map)
+            throw std::invalid_argument("Unexpected format of node");
+        if (node["IsBegin"].as<bool>()) {
+            sourceFilesAccumulator.addLocation(
+                {node["FileName"].as<std::string>().c_str(),
+                 node["Line"].as<int>(), node["Column"].as<int>()});
+        }
+    }
+    return sourceFilesAccumulator.sourceFiles;
+}
+
+void TraceReader::buildFromYAML(QString fileName) {
+    qDebug() << "TraceReader::build fileName=" << fileName;
+    auto document = YAML::LoadFile(fileName.toStdString());
+    SourceFileIdAccumulator sourceFilesAccumulator(dirPath);
+
+    std::stack<TraceEntry *> childVectorStack;
+    childVectorStack.push(&target);
+    int counter = 0;
+
+    try {
+        for (auto const &node : document) {
+            if (node.Type() != YAML::NodeType::Map)
+                throw std::invalid_argument("Unexpected format of node");
+            if (node["IsBegin"].as<bool>()) {
+                traceEntryPtr newEntry(new TraceEntry{});
+                newEntry->id = counter++;
+                newEntry->context = node["Name"].as<std::string>().c_str();
+                SourceFileLocation location{
+                    node["FileName"].as<std::string>().c_str(),
+                    node["Line"].as<int>(), node["Column"].as<int>()};
+                newEntry->instantiation =
+                    sourceFilesAccumulator.addLocation(location);
+                newEntry->instantiationEnd = newEntry->instantiationBegin =
+                    newEntry->instantiation;
+                /* todo:
+                newEntry->declarationBegin;
+                newEntry->declarationEnd;
+                */
+                newEntry->kind =
+                    entryKindFromString(node["Kind"].as<std::string>().c_str());
+                newEntry->parent = childVectorStack.top();
+                childVectorStack.top()->children.push_back(newEntry);
+                childVectorStack.push(
+                    childVectorStack.top()->children.last().data());
+            } else {
+                TraceEntry &lastEntry = *childVectorStack.top();
+                lastEntry.memoryUsage = node["MemoryUsage"].as<long long>();
+                childVectorStack.pop();
+            }
+        }
+    } catch (...) {
+        qDebug() << "Error during YAML parsing";
+    }
+}
+#endif
 
 void TraceReader::buildFromBinary(QString fileName) {
     qDebug() << "TraceReader::build fileName=" << fileName;

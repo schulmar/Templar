@@ -35,6 +35,7 @@
 #include <QSplitter>
 #include <QSettings>
 #include <QFileInfo>
+#include <QDebug>
 
 //TODO unused variable: static const int BigGraph = 200;
 
@@ -325,7 +326,11 @@ QAction* MainWindow::createAction(const char* name, const char* shortcut, const 
 
 void MainWindow::on_actionOpen_trace_triggered()
 {
-    QString fileFilters = tr("Trace files (*.trace.xml);; Any files (*)");
+    QString fileFilters = tr("Trace files (*.trace.xml"
+#if YAML_TRACEFILE_SUPPORT
+                              " *.trace.yaml"
+#endif
+                              ");; Any files (*)");
     QString fileName =
     QFileDialog::getOpenFileName(this, tr("Open trace file"),
             currentFileName.left(
@@ -337,25 +342,56 @@ void MainWindow::on_actionOpen_trace_triggered()
     openTrace(fileName);
 
 }
+
+/**
+ * @brief Remove an extension from a path string
+ * @param extensionsToRemove list of extensions (without dots!)
+ *
+ * The dots are removed as well!
+ */
+QString removeExtension(QString path, QStringList extensionsToRemove) {
+    for (const auto &extension : extensionsToRemove) {
+        if (path.endsWith(extension)) {
+            // -1 to remove the dot as well
+            return path.left(path.lastIndexOf(extension) - 1);
+        }
+    }
+    return path;
+}
+
+QString sourceFileNameFromTraceFileName(QString traceFileName) {
+    QRegExp regex(R"raw((\.memory)?\.trace\.(xml|yaml))raw");
+    return removeExtension(
+        removeExtension(removeExtension(traceFileName, {"xml", "yaml"}),
+                        {"trace"}),
+        {"memory"});
+}
+
 void MainWindow::openTrace(const QString &fileName)
 {
     currentFileName = fileName;
     ignoreList.clear();
 
-    const char *memoryTraceExtension = ".memory.trace.xml";
-    const char *traceExtension = "trace.xml";
+    if (!QFileInfo::exists(fileName))
+        return;
+
+
     const char *fileListExtension = ".filelist.trace";
 
-    QString srcFilename = currentFileName.left(
-        currentFileName.endsWith(memoryTraceExtension)
-            ? currentFileName.lastIndexOf(memoryTraceExtension)
-            : currentFileName.lastIndexOf(traceExtension));
+    QString srcFilename = sourceFileNameFromTraceFileName(fileName);
 
     QString fileListFilename = srcFilename + fileListExtension;
     if(QFileInfo::exists(fileListFilename)) {
         usedFiles = new Templar::UsedSourceFileModel(fileListFilename);
     } else {
-        usedFiles = new Templar::UsedSourceFileModel(Templar::TraceReader::readSourceFilesFromXML(fileName));
+#if YAML_TRACEFILE_SUPPORT
+        if (!fileName.endsWith("xml")) {
+            usedFiles = new Templar::UsedSourceFileModel(
+                Templar::TraceReader::readSourceFilesFromYAML(fileName));
+        } else
+#endif
+            usedFiles = new Templar::UsedSourceFileModel(
+                Templar::TraceReader::readSourceFilesFromXML(fileName));
     }
     debugManager->setUsedFileModel(usedFiles);
 
