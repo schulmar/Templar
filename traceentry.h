@@ -85,6 +85,8 @@ struct TraceEntry {
 
     } kind;
 
+    static const std::vector<const char *> InstantiationKindNames;
+
     TraceEntry() : kind(Unknown), id(-1), memoryUsage(0), parent(nullptr) {}
 
     QString context;

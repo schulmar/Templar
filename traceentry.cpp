@@ -5,6 +5,18 @@
 namespace Templar
 {
 
+const std::vector<const char *> TraceEntry::InstantiationKindNames = {
+    "TemplateInstantiation",
+    "DefaultTemplateArgumentInstantiation",
+    "DefaultFunctionArgumentInstantiation",
+    "ExplicitTemplateArgumentSubstitution",
+    "DeducedTemplateArgumentSubstitution",
+    "PriorTemplateArgumentSubstitution",
+    "DefaultTemplateArgumentChecking",
+    "ExceptionSpecInstantiation",
+    "Memoization",
+    "Unknown"};
+
 TraceEntry::iterator::iterator(const TraceEntry *first)
     :currentEntry(first)
     ,root(first)
@@ -115,6 +127,8 @@ QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
         , Qt::darkGreen
     };
 
+    auto const& element = entry.children.at(row);
+
     switch(role)
     {
     case Qt::DisplayRole:
@@ -122,22 +136,28 @@ QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
         switch(col)
         {
         case 0:
-            return entry.children.at(row)->context;
+            return element->context;
         case 1:
-            return entry.children.at(row)->sourcefile;
+            return element->sourcefile;
         case 2:
-            return QString::number(entry.children.at(row)->memoryUsage);
+            return QString::number(element->memoryUsage);
         case 3:
-            return QString::number(entry.children.at(row)->children.size());
+            return QString::number(element->children.size());
         }
     }
         break;
     case Qt::ToolTipRole:
     {
-        return entry.children.at(row)->context;
+        const char *instantiationKindName = "invalid kind index";
+        try {
+            instantiationKindName =
+                TraceEntry::InstantiationKindNames.at(element->kind);
+        } catch (std::out_of_range const&) {}
+        return QString("%0 (%1)").arg(element->context).arg(
+            instantiationKindName);
     }
     case Qt::BackgroundRole:
-        return QBrush(backgrounds[entry.children.at(row)->kind]);
+        return QBrush(backgrounds[element->kind]);
     }
 
 
