@@ -57,6 +57,13 @@ TraceEntry::iterator& TraceEntry::iterator::operator++()
     return *this;
 }
 
+const std::vector<EntryListModelAdapter::Header>
+    EntryListModelAdapter::headers = {
+        {"Context", "Context of the event"},
+        {"File", "File this event is taking place in"},
+        {"Memory", "Total memory consumption of clang during this event"},
+        {"#Children", "The number of child events"},
+        {"Duration", "The duration of this event in microseconds"}};
 
 EntryListModelAdapter::EntryListModelAdapter(QObject *parent, const TraceEntry &entry)
     : QAbstractListModel(parent), entry(entry)
@@ -85,15 +92,6 @@ QModelIndex EntryListModelAdapter::index(int row, int column,
 QVariant EntryListModelAdapter::headerData(int section,
                                            Qt::Orientation orientation,
                                            int role) const {
-    struct Header {
-        const char *caption;
-        const char *tooltip;
-    };
-    std::vector<Header> headers = {
-        {"Context", "Type of the template"},
-        {"File", "File this invocation is taking place in"},
-        {"Memory", "Total memory consumption of clang during this event"},
-        {"#Children", "The number of child templates instantiated by this"}};
     try {
         switch (role) {
         case Qt::DisplayRole:
@@ -108,6 +106,10 @@ QVariant EntryListModelAdapter::headerData(int section,
     } catch (std::out_of_range const&) {
         return QVariant();
     }
+}
+
+int EntryListModelAdapter::columnCount(const QModelIndex &) const {
+    return headers.size();
 }
 
 QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
@@ -143,6 +145,9 @@ QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
             return QString::number(element->memoryUsage);
         case 3:
             return QString::number(element->children.size());
+        case 4:
+            // output in microseconds
+            return QString::number(1e6 * element->duration);
         }
     }
         break;
@@ -168,12 +173,17 @@ EntryListSortFilterProxy::EntryListSortFilterProxy(QObject *parent)
     : QSortFilterProxyModel(parent)
 {}
 
-bool EntryListSortFilterProxy::lessThan(const QModelIndex &left, const QModelIndex &right) const
-{
+bool EntryListSortFilterProxy::lessThan(const QModelIndex &left,
+                                        const QModelIndex &right) const {
     QVariant leftData = sourceModel()->data(left);
     QVariant rightData = sourceModel()->data(right);
-    return leftData.toUInt() < rightData.toUInt();
+    if (left.column() == 4) {
+        return leftData.toDouble() < rightData.toDouble();
+    } else {
+        return leftData.toUInt() < rightData.toUInt();
+    }
 }
+
 bool EntryListSortFilterProxy::filterAcceptsRow(int sourceRow, const QModelIndex &) const
 {
     EntryListModelAdapter *psource = dynamic_cast<EntryListModelAdapter*>(sourceModel());

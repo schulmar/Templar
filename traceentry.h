@@ -129,7 +129,7 @@ class EntryListModelAdapter : public QAbstractListModel
     Q_OBJECT
 public:
     EntryListModelAdapter(QObject *parent, const TraceEntry &entry);
-    virtual int columnCount(const QModelIndex &) const { return 4; }
+    int columnCount(const QModelIndex &) const override;
     virtual int rowCount(const QModelIndex &) const { return entry.children.size();}
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
@@ -139,7 +139,12 @@ public:
 
     const TraceEntry &entry;
     std::vector<traceEntryPtr> proxy;
-
+private:
+    struct Header {
+        const char *caption;
+        const char *tooltip;
+    };
+    static const std::vector<Header> headers;
 };
 class EntryListSortFilterProxy : public QSortFilterProxyModel
 {
