@@ -70,6 +70,34 @@ QModelIndex EntryListModelAdapter::index(int row, int column,
         return QModelIndex();
 }
 
+QVariant EntryListModelAdapter::headerData(int section,
+                                           Qt::Orientation orientation,
+                                           int role) const {
+    struct Header {
+        const char *caption;
+        const char *tooltip;
+    };
+    std::vector<Header> headers = {
+        {"Context", "Type of the template"},
+        {"File", "File this invocation is taking place in"},
+        {"Memory", "Total memory consumption of clang during this event"},
+        {"#Children", "The number of child templates instantiated by this"}};
+    try {
+        switch (role) {
+        case Qt::DisplayRole:
+            return headers.at(section).caption;
+            break;
+        case Qt::ToolTipRole:
+            return headers.at(section).tooltip;
+            break;
+        default:
+            return QAbstractListModel::headerData(section, orientation, role);
+        }
+    } catch (std::out_of_range const&) {
+        return QVariant();
+    }
+}
+
 QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
 {
     int row = index.row();

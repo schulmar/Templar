@@ -95,6 +95,7 @@ void MainWindow::initGui() {
     tableWidget->setModel(entryProxyModel);
 
     fileViewWidget = new QTreeView(this);
+    fileViewWidget->setHeaderHidden(true);
 
     QSplitter *topSplitter = new QSplitter(this);
     topSplitter->addWidget(codeEdit);

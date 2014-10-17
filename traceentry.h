@@ -130,6 +130,8 @@ public:
     virtual QVariant data(const QModelIndex &index, int role) const;
     virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
     void updateProxyData();
+    QVariant headerData(int section, Qt::Orientation orientation,
+                        int role = Qt::DisplayRole) const override;
 
     const TraceEntry &entry;
     std::vector<traceEntryPtr> proxy;
