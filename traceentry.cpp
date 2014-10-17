@@ -181,9 +181,13 @@ bool EntryListSortFilterProxy::lessThan(const QModelIndex &left,
                                         const QModelIndex &right) const {
     QVariant leftData = sourceModel()->data(left);
     QVariant rightData = sourceModel()->data(right);
-    if (left.column() == 4) {
+    switch (left.column()) {
+    case 0:
+    case 1:
+        return leftData.toString() < rightData.toString();
+    case 4:
         return leftData.toDouble() < rightData.toDouble();
-    } else {
+    default:
         return leftData.toUInt() < rightData.toUInt();
     }
 }
