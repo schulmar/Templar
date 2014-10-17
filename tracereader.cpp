@@ -182,9 +182,10 @@ void TraceReader::buildFromXML(QString fileName) {
                 TraceEntry &lastEntry = *childVectorStack.top();
                 do {
                     xml.readNext();
-                    if (xml.name().toString() == Memory) {
+                    if (xml.name().toString() == Memory &&
+                        xml.isStartElement()) {
                         lastEntry.memoryUsage =
-                            xml.attributes().value("context").toLongLong();
+                            xml.attributes().value("bytes").toLongLong();
                     } else if (xml.name().toString() == TimeStamp &&
                                xml.isStartElement()) {
                         double endTimeStamp =
