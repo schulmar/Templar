@@ -87,7 +87,8 @@ struct TraceEntry {
 
     static const std::vector<const char *> InstantiationKindNames;
 
-    TraceEntry() : kind(Unknown), id(-1), memoryUsage(0), parent(nullptr) {}
+    TraceEntry()
+    : kind(Unknown), id(-1), memoryUsage(0), duration(0), parent(nullptr) {}
 
     QString context;
     SourceLocation instantiation;
@@ -98,6 +99,7 @@ struct TraceEntry {
     QString sourcefile;
     unsigned int id;
     int64_t memoryUsage;
+    double duration;
     TraceEntry *parent;
     QVector<traceEntryPtr> children;
 

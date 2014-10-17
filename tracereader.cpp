@@ -38,7 +38,7 @@ static const char* TemplateEnd = "TemplateEnd";
 static const char* Position = "PointOfInstantiation";
 static const char* Context = "Context";
 static const char* Kind = "Kind";
-//static const char* TimeStamp = "TimeStamp";
+static const char* TimeStamp = "TimeStamp";
 static const char* Memory = "MemoryUsage";
 
 struct SourceFileLocation {
@@ -165,6 +165,11 @@ void TraceReader::buildFromXML(QString fileName) {
                                xml.isStartElement()) {
                         newEntry->kind =
                             entryKindFromString(xml.readElementText());
+                    } else if (xml.name().toString() == TimeStamp &&
+                               xml.isStartElement()) {
+                        // store start for later difference calculation
+                        newEntry->duration =
+                            xml.attributes().value("time").toDouble();
                     }
                 } while (xml.name().toString() != entryType);
 
@@ -179,6 +184,11 @@ void TraceReader::buildFromXML(QString fileName) {
                     if (xml.name().toString() == Memory) {
                         lastEntry.memoryUsage =
                             xml.attributes().value("context").toLongLong();
+                    } else if (xml.name().toString() == TimeStamp &&
+                               xml.isStartElement()) {
+                        double endTimeStamp =
+                            xml.attributes().value("time").toDouble();
+                        lastEntry.duration = endTimeStamp - lastEntry.duration;
                     }
                 } while (xml.name().toString() != entryType);
                 childVectorStack.pop();
@@ -231,6 +241,8 @@ void TraceReader::buildFromYAML(QString fileName) {
                     sourceFilesAccumulator.addLocation(location);
                 newEntry->instantiationEnd = newEntry->instantiationBegin =
                     newEntry->instantiation;
+                // store the start for later difference calculation
+                newEntry->duration = node["TimeStamp"].as<double>();
                 /* todo:
                 newEntry->declarationBegin;
                 newEntry->declarationEnd;
@@ -243,6 +255,8 @@ void TraceReader::buildFromYAML(QString fileName) {
                     childVectorStack.top()->children.last().data());
             } else {
                 TraceEntry &lastEntry = *childVectorStack.top();
+                // calculate the difference to start
+                lastEntry.duration = node["TimeStamp"].as<double>() - lastEntry.duration;
                 lastEntry.memoryUsage = node["MemoryUsage"].as<long long>();
                 childVectorStack.pop();
             }
