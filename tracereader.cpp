@@ -151,13 +151,13 @@ void TraceReader::buildFromXML(QString fileName) {
                             xml.attributes().value("context").toString();
                     } else if (xml.name().toString() == Position &&
                                xml.isStartElement()) {
-                        auto location = locationFromXML(xml);
                         newEntry->instantiation =
-                            sourceFilesAccumulator.addLocation(location);
+                            sourceFilesAccumulator.addLocation(
+                                locationFromXML(xml));
                         newEntry->instantiationEnd =
                             newEntry->instantiationBegin =
                                 newEntry->instantiation;
-                        newEntry->sourcefile = location.filePath;
+                        newEntry->sourceFileId = newEntry->instantiation.fileId;
                         /* todo:
                         newEntry->declarationBegin;
                         newEntry->declarationEnd;
@@ -243,7 +243,7 @@ void TraceReader::buildFromYAML(QString fileName) {
                     sourceFilesAccumulator.addLocation(location);
                 newEntry->instantiationEnd = newEntry->instantiationBegin =
                     newEntry->instantiation;
-                newEntry->sourcefile = location.filePath;
+                newEntry->sourceFileId = newEntry->instantiation.fileId;
                 // store the start for later difference calculation
                 newEntry->duration = node["TimeStamp"].as<double>();
                 /* todo:

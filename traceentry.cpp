@@ -139,8 +139,12 @@ QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
         {
         case 0:
             return element->context;
-        case 1:
-            return element->sourcefile;
+        case 1: {
+            auto found = UsedSourceFileModel::nodeIdMap.find(element->sourceFileId);
+            if(found != UsedSourceFileModel::nodeIdMap.end()) {
+              return (*found)->name;
+            }
+        }
         case 2:
             return QString::number(element->memoryUsage);
         case 3:
