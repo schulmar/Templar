@@ -93,3 +93,8 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     resources.qrc
+
+    
+LIBS += -lprotobuf
+PROTOS += templight_messages.proto
+include(protobuf.pri)

@@ -17,7 +17,8 @@ YAMLTraceReader::readSourceFiles(const QString &fileName) {
         if (node["IsBegin"].as<bool>()) {
             sourceFilesAccumulator.addLocation(
                 {node["FileName"].as<std::string>().c_str(),
-                 node["Line"].as<int>(), node["Column"].as<int>()});
+                 node["Line"].as<unsigned int>(),
+                 node["Column"].as<unsigned int>()});
         }
     }
     return sourceFilesAccumulator.sourceFiles;
@@ -39,7 +40,8 @@ YAMLTraceReader::BuildReturn YAMLTraceReader::build(QString fileName) {
                 newEntry->context = node["Name"].as<std::string>().c_str();
                 SourceFileLocation location{
                     node["FileName"].as<std::string>().c_str(),
-                    node["Line"].as<int>(), node["Column"].as<int>()};
+                    node["Line"].as<unsigned int>(),
+                    node["Column"].as<unsigned int>()};
                 newEntry->instantiation =
                     sourceFilesAccumulator.addLocation(location);
                 newEntry->instantiationEnd = newEntry->instantiationBegin =

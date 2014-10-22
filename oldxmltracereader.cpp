@@ -17,8 +17,8 @@ const char* Memory = "MemoryUsage";
 SourceFileLocation OldXMLTraceReader::locationFromXML(QXmlStreamReader &xml) {
   assert(xml.name().toString() == Position);
   auto components = xml.readElementText().split('|');
-  return SourceFileLocation{components[0], components[1].toInt(),
-                            components[2].toInt()};
+  return SourceFileLocation{components[0], components[1].toUInt(),
+                            components[2].toUInt()};
 }
 
 SourceFileIdAccumulator::SourceFiles

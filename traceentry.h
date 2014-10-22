@@ -23,8 +23,8 @@ struct AbstractEntryWalker
 struct SourceLocation
 {
    size_t fileId;
-   int    line;
-   int    col;
+   unsigned int    line;
+   unsigned int    col;
 };
 
 typedef QSharedPointer<TraceEntry> traceEntryPtr;

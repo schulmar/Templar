@@ -8,7 +8,7 @@ namespace Templar {
 
 struct SourceFileLocation {
     QString filePath;
-    int line, column;
+    unsigned int line, column;
 };
 
 struct SourceFileIdAccumulator {
