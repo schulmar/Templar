@@ -318,7 +318,7 @@ QAction* MainWindow::createAction(const char* name, const char* shortcut, const 
 {
     QAction* action = new QAction(tr(name), parent);
     action->setIcon(QIcon(icon));
-    action->setShortcut(tr(shortcut));
+    action->setShortcut(QKeySequence(tr(shortcut)));
     action->setStatusTip(tr(statusTip));
     return action;
 }
@@ -326,7 +326,7 @@ QAction* MainWindow::createAction(const char* name, const char* shortcut, const 
 QAction* MainWindow::createAction(const char* name, const char* shortcut, const char* statusTip, QWidget* parent)
 {
     QAction* action = new QAction(tr(name), parent);
-    action->setShortcut(tr(shortcut));
+    action->setShortcut(QKeySequence(tr(shortcut)));
     action->setStatusTip(tr(statusTip));
     return action;
 }
