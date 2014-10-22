@@ -1,6 +1,7 @@
 #include "listwidgethandler.h"
 #include "traceentry.h"
 #include "usedsourcefilemodel.h"
+#include "traceentrylist.h"
 
 //#include <QListView>
 #include <QTableView>
@@ -50,7 +51,7 @@ void ListWidgetHandler::selectRoot(const TraceEntry &entry)
     using namespace Detail;
 
     EntryListModelAdapter *oldModel = dynamic_cast<EntryListModelAdapter*>(proxyModel->sourceModel());
-    EntryListModelAdapter *newModel = new EntryListModelAdapter(proxyModel,entry);
+    EntryListModelAdapter *newModel = new EntryListModelAdapter(proxyModel,entry, usedFileModel);
 
     proxyModel->setSourceModel(newModel);
     delete oldModel;
@@ -61,7 +62,7 @@ void ListWidgetHandler::inspect(const TraceEntry &entry)
      using namespace Detail;
 
     EntryListModelAdapter *oldModel = dynamic_cast<EntryListModelAdapter*>(proxyModel->sourceModel());
-    EntryListModelAdapter *newModel = new EntryListModelAdapter(proxyModel,entry);
+    EntryListModelAdapter *newModel = new EntryListModelAdapter(proxyModel,entry, usedFileModel);
 
     proxyModel->setSourceModel(newModel);
      delete oldModel;
@@ -73,7 +74,7 @@ void ListWidgetHandler::handleEvent(const TraceEntry &entry)
     using namespace Detail;
 
     EntryListModelAdapter *oldModel = dynamic_cast<EntryListModelAdapter*>(proxyModel->sourceModel());
-    EntryListModelAdapter *newModel = new EntryListModelAdapter(proxyModel,entry);
+    EntryListModelAdapter *newModel = new EntryListModelAdapter(proxyModel,entry, usedFileModel);
 
      proxyModel->setSourceModel(newModel);
      delete oldModel;

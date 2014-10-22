@@ -25,6 +25,8 @@ QMAKE_CXXFLAGS += -std=c++11
 
 DEFINES += YAML_TRACEFILE_SUPPORT=1
 LIBS += -lyaml-cpp
+SOURCES += yamltracereader.cpp
+HEADERS += yamltracereader.h
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -48,7 +50,11 @@ SOURCES += main.cpp\
     usedsourcefilemodel.cpp \
     entryfiltersettings.cpp \
     colorpreferencesdialog.cpp \
-    settingsnames.cpp
+    settingsnames.cpp \
+    oldxmltracereader.cpp \
+    protobuftracereader.cpp \
+    binarytracereader.cpp \
+    traceentrylist.cpp
 
 HEADERS  += mainwindow.h \
     tracereader.h \
@@ -72,7 +78,11 @@ HEADERS  += mainwindow.h \
     usedsourcefilemodel.h \
     entryfiltersettings.h \
     colorpreferencesdialog.h \
-    settingsnames.h
+    settingsnames.h \
+    oldxmltracereader.h \
+    protobuftracereader.h \
+    binarytracereader.h \
+    traceentrylist.h
 
 FORMS    += mainwindow.ui \
     sourceviewer.ui \

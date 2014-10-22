@@ -16,6 +16,8 @@
 #include "usedsourcefilemodel.h"
 #include "traceentry.h"
 #include "colorpreferencesdialog.h"
+#include "traceentrylist.h"
+#include "binarytracereader.h"
 
 #include "entryfiltersettings.h"
 #include "settingsnames.h"
@@ -253,13 +255,17 @@ void MainWindow::reset() {
 
     QString dirPath = currentFileName.left(currentFileName.lastIndexOf("/") + 1);
 
-    TraceReader reader(debugManager->getEntryTarget());
-    reader.setDirPath(dirPath);
-
     GraphvizBuilder graphvizBuilder;
     EntryVectorBuilder vecBuilder;
 
-    reader.build(currentFileName);
+    usedFiles = TraceReader::build(currentFileName, debugManager->getEntryTarget(), dirPath);
+    QObject::connect(
+        usedFiles.get(), SIGNAL(dataChanged(QModelIndex, QModelIndex)),
+        entryProxyModel,
+        SLOT(fileFilterDataChanged(const QModelIndex &, const QModelIndex &)));
+    debugManager->setUsedFileModel(usedFiles.get());
+    fileViewWidget->setModel(usedFiles.get());
+    entryProxyModel->setUsedSourceFileModel(usedFiles.get());
 
     debugManager->reset();
 
@@ -344,30 +350,6 @@ void MainWindow::on_actionOpen_trace_triggered()
 
 }
 
-/**
- * @brief Remove an extension from a path string
- * @param extensionsToRemove list of extensions (without dots!)
- *
- * The dots are removed as well!
- */
-QString removeExtension(QString path, QStringList extensionsToRemove) {
-    for (const auto &extension : extensionsToRemove) {
-        if (path.endsWith(extension)) {
-            // -1 to remove the dot as well
-            return path.left(path.lastIndexOf(extension) - 1);
-        }
-    }
-    return path;
-}
-
-QString sourceFileNameFromTraceFileName(QString traceFileName) {
-    QRegExp regex(R"raw((\.memory)?\.trace\.(xml|yaml))raw");
-    return removeExtension(
-        removeExtension(removeExtension(traceFileName, {"xml", "yaml"}),
-                        {"trace"}),
-        {"memory"});
-}
-
 void MainWindow::openTrace(const QString &fileName)
 {
     currentFileName = fileName;
@@ -376,30 +358,7 @@ void MainWindow::openTrace(const QString &fileName)
     if (!QFileInfo::exists(fileName))
         return;
 
-
-    const char *fileListExtension = ".filelist.trace";
-
-    QString srcFilename = sourceFileNameFromTraceFileName(fileName);
-
-    QString fileListFilename = srcFilename + fileListExtension;
-    if(QFileInfo::exists(fileListFilename)) {
-        usedFiles = new Templar::UsedSourceFileModel(fileListFilename);
-    } else {
-#if YAML_TRACEFILE_SUPPORT
-        if (!fileName.endsWith("xml")) {
-            usedFiles = new Templar::UsedSourceFileModel(
-                Templar::TraceReader::readSourceFilesFromYAML(fileName));
-        } else
-#endif
-            usedFiles = new Templar::UsedSourceFileModel(
-                Templar::TraceReader::readSourceFilesFromXML(fileName));
-    }
-    debugManager->setUsedFileModel(usedFiles);
-
-    QObject::connect(
-                usedFiles,SIGNAL(dataChanged(QModelIndex,QModelIndex))
-                ,entryProxyModel,SLOT(fileFilterDataChanged(const QModelIndex&,const QModelIndex&))
-            );
+    QString srcFilename = Templar::sourceFileNameFromTraceFileName(fileName);
 
     QFile file(srcFilename);
     file.open(QIODevice::ReadOnly);
@@ -409,8 +368,6 @@ void MainWindow::openTrace(const QString &fileName)
 
     codeEdit->setPlainText(source);
     highlighter = new Highlighter(codeEdit->document());
-
-    fileViewWidget->setModel(usedFiles);
     try {
       reset();
     } catch (Templar::FileException *) {

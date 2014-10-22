@@ -83,19 +83,21 @@ void EditorHandler::gotoFile(const QString &filename)
     editor->setDocumentTitle(filename);
 }
 void EditorHandler::highlightPos(const TraceEntry& entry, const QColor& color) {
+    if (usedFileModel) {
+        UsedFileMap::iterator found =
+            usedFileModel->nodeIdMap.find(entry.instantiation.fileId);
+        if (found != usedFileModel->nodeIdMap.end()) {
+            QFile file((*found)->fullPath);
 
-    UsedFileMap::iterator found = UsedSourceFileModel::nodeIdMap.find(entry.instantiation.fileId);
-    if(found != UsedSourceFileModel::nodeIdMap.end())
-    {
-        QFile file((*found)->fullPath);
+            file.open(QIODevice::ReadOnly);
 
-        file.open(QIODevice::ReadOnly);
+            QString src(file.readAll());
 
-        QString src(file.readAll());
-
-        editor->setPlainText(src);
-        editor->setDocumentTitle((*found)->fullPath);
-        editor->highlightRange(entry.instantiationBegin,entry.instantiationEnd,color);
+            editor->setPlainText(src);
+            editor->setDocumentTitle((*found)->fullPath);
+            editor->highlightRange(entry.instantiationBegin,
+                                   entry.instantiationEnd, color);
+        }
     }
 }
 

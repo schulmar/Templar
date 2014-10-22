@@ -6,29 +6,21 @@
 #include <QList>
 #include <stack>
 #include "builder.h"
+#include <memory>
+#include "usedsourcefilemodel.h"
 
 namespace Templar {
 
 class TraceReader
 {
 public:
-    TraceReader(TraceEntry &target)
-        : target(target)/*todo: unused, entryCounter(0)*/ {}
+    virtual ~TraceReader() = default;
 
-    void build(QString fileName);
+    using BuildReturn = std::unique_ptr<UsedSourceFileModel>;
+    static BuildReturn build(QString fileName, TraceEntry &target, QString dirPath);
 
-    using SourceFiles = std::vector<QString>;
-    static SourceFiles readSourceFilesFromXML(const QString &fileName);
+    virtual BuildReturn build(QString fileName) = 0;
 
-    void buildFromXML(QString fileName);
-
-#if YAML_TRACEFILE_SUPPORT
-    static SourceFiles readSourceFilesFromYAML(const QString &fileName);
-
-    void buildFromYAML(QString fileName);
-#endif
-
-    void buildFromBinary(QString fileName);
 
     void setDirPath(const QString& path) {
         dirPath = path;
@@ -38,16 +30,27 @@ public:
         return dirPath;
     }
 
+  protected:
+    TraceReader(TraceEntry &target)
+    : entryCounter(0) {
+        childVectorStack.push(&target);
+    }
+
+    void beginEntry(traceEntryPtr);
+
+    TraceEntry &endEntry();
+
 private:
-    TraceEntry &target;
-    std::stack<TraceEntry> traceEntryStack;
+    std::stack<TraceEntry*> childVectorStack;
 
     QString dirPath;
 
-    //todo: unused unsigned int entryCounter;
+    unsigned int entryCounter;
 };
 
+QString sourceFileNameFromTraceFileName(QString traceFileName);
 
+TraceEntry::InstantiationKind entryKindFromString(QString name);
 
 class FileException{};
 

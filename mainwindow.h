@@ -1,6 +1,8 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <memory>
+
 #include <QMainWindow>
 #include <QPointer>
 #include <QMap>
@@ -107,7 +109,7 @@ private:
     Templar::GraphHandler *graphHandler;
 
     QPointer<Highlighter> highlighter;
-    Templar::UsedSourceFileModel *usedFiles;
+    std::unique_ptr<Templar::UsedSourceFileModel> usedFiles;
     Templar::EntryListSortFilterProxy *entryProxyModel;
 
     //QListView *listWidget;

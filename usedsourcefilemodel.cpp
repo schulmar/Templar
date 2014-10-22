@@ -11,32 +11,7 @@ void SourceFileNode::setVisible(bool value)
     std::for_each(children.begin(),children.end(),[=](SourceFileNode *child) { child->setVisible(value);});
 }
 
-UsedFileMap UsedSourceFileModel::nodeIdMap;
-
-UsedSourceFileModel::UsedSourceFileModel(const QString &fileName)
-{
-    nodeIdMap.clear();
-
-   QFile file(fileName);
-   file.open(QIODevice::ReadOnly);
-
-   QDataStream input(&file);
-   input.setByteOrder(QDataStream::LittleEndian);
-   while(!input.atEnd())
-   {
-        quint64 fileId;
-        input>>fileId;
-        qint32 length;
-        input>>length;
-        QByteArray buffer(length,Qt::Uninitialized);
-        input.readRawData(buffer.data(),length);
-        QString path(buffer);
-        Add(path, fileId);
-    }
-}
-
 UsedSourceFileModel::UsedSourceFileModel(const std::vector<QString> &fileNames) {
-    nodeIdMap.clear();
     size_t fileId = 0;
     for (auto const &path : fileNames) {
         Add(path, fileId++);

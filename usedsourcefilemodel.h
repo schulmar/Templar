@@ -35,7 +35,7 @@ typedef QMap<size_t, SourceFileNode*> UsedFileMap;
 class UsedSourceFileModel : public QAbstractItemModel
 {
 public:
-    explicit UsedSourceFileModel(const QString &fileName);
+    UsedSourceFileModel() = default;
     explicit UsedSourceFileModel(const std::vector<QString> &fileNames);
     void Add(const QString &newPath, size_t fileId);
 
@@ -49,7 +49,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
     SourceFileNode root;
-    static UsedFileMap nodeIdMap;
+    UsedFileMap nodeIdMap;
 
 };
 }
