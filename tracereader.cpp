@@ -5,6 +5,7 @@
 #include "oldxmltracereader.h"
 #include "yamltracereader.h"
 #include "binarytracereader.h"
+#include "protobuftracereader.h"
 
 namespace Templar {
 
@@ -13,7 +14,9 @@ TraceReader::BuildReturn TraceReader::build(QString fileName, TraceEntry &entry,
     qDebug() << "TraceReader::build(" << fileName << ")";
 
     std::unique_ptr<TraceReader> reader;
-    if (fileName.endsWith("xml")) {
+    if(fileName.endsWith("pbf")) {
+      reader = make_unique<ProtobufTraceReader>(entry);
+    } else if (fileName.endsWith("xml")) {
       reader = make_unique<OldXMLTraceReader>(entry);
 #if YAML_TRACEFILE_SUPPORT
     } else if (fileName.endsWith("yaml")) {
@@ -46,9 +49,9 @@ QString removeExtension(QString path, QStringList extensionsToRemove) {
 }
 
 QString sourceFileNameFromTraceFileName(QString traceFileName) {
-    QRegExp regex(R"raw((\.memory)?\.trace\.(xml|yaml))raw");
+    QRegExp regex(R"raw((\.memory)?\.trace\.(xml|yaml|pbf))raw");
     return removeExtension(
-        removeExtension(removeExtension(traceFileName, {"xml", "yaml"}),
+        removeExtension(removeExtension(traceFileName, {"xml", "yaml", "pbf"}),
                         {"trace"}),
         {"memory"});
 }

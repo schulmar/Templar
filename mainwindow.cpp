@@ -337,6 +337,7 @@ void MainWindow::on_actionOpen_trace_triggered()
 #if YAML_TRACEFILE_SUPPORT
                               " *.trace.yaml"
 #endif
+                              " *.trace.pbf"
                               ");; Any files (*)");
     QString fileName =
     QFileDialog::getOpenFileName(this, tr("Open trace file"),
