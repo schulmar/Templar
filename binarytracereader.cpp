@@ -30,7 +30,7 @@ BinaryTraceReader::BuildReturn BinaryTraceReader::build(QString fileName) {
         {
            traceEntryPtr newEntry ( new TraceEntry{} );
            newEntry->id = counter++;
-           input.readRawData((char*)&newEntry->kind,4);
+           input.readRawData(reinterpret_cast<char*>(&newEntry->kind),4);
            qint32 length;
            input>>length;
            QByteArray buffer(length, Qt::Uninitialized);
@@ -48,7 +48,7 @@ BinaryTraceReader::BuildReturn BinaryTraceReader::build(QString fileName) {
         else if(entryHeader==0)
         {
           auto &entry = endEntry();
-          input.readRawData((char*)&entry.memoryUsage,sizeof(size_t));
+          input.readRawData(reinterpret_cast<char*>(&entry.memoryUsage),sizeof(size_t));
         }
         else
         {

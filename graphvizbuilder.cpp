@@ -77,10 +77,9 @@ void GraphvizBuilder::templateBegin(const TraceEntry& entry)
                           const_cast<char*>(idStr.c_str()),
                           TRUE);
 
-    char* label = Q_TO_C_STRING(breakString(entry.context));
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wwrite-strings"
-    agset(node, "label", label);
+    agset(node, "label", Q_TO_C_STRING(breakString(entry.context)));
 
     if (entry.kind == TraceEntry::Memoization) {
         agset(node, "shape", Q_TO_C_STRING(common::attrs::ELLIPSESHAPE));
@@ -107,7 +106,7 @@ void GraphvizBuilder::templateEnd()
 
 GraphvizVisitor::GraphvizVisitor(QSharedPointer<GVC_t> &gvc)
     : gvc(gvc) {
-    #pragma GCC diagnostic push
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wwrite-strings"
     Agraph_t *graphPtr = agopen("Templight", Agstrictdirected, &AgDefaultDisc);
     agattr(graphPtr, AGNODE, "shape", Q_TO_C_STRING(common::attrs::POLYSHAPE));
@@ -130,10 +129,9 @@ node_t *GraphvizVisitor::visit(node_t *parent_data,
                           const_cast<char*>(idStr.c_str()),
                           TRUE);
 
-    char* label = Q_TO_C_STRING(breakString(current.context));
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wwrite-strings"
-    agset(node, "label", label);
+    agset(node, "label", Q_TO_C_STRING(breakString(current.context)));
     std::string nodeKindStr = lexical_cast<std::string>(current.kind);
     agset(node, "nodeKind", const_cast<char*>(nodeKindStr.c_str()));
     if (current.kind == TraceEntry::Memoization) {

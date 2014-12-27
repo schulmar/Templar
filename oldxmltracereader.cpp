@@ -93,7 +93,7 @@ OldXMLTraceReader::BuildReturn OldXMLTraceReader::build(QString fileName) {
                                xml.isStartElement()) {
                         // store start for later difference calculation
                         newEntry->duration =
-                            xml.attributes().value("time").toDouble();
+                            xml.attributes().value("time").toString().toDouble();
                     }
                 } while (xml.name().toString() != entryType);
 
@@ -105,11 +105,11 @@ OldXMLTraceReader::BuildReturn OldXMLTraceReader::build(QString fileName) {
                     if (xml.name().toString() == Memory &&
                         xml.isStartElement()) {
                         lastEntry.memoryUsage =
-                            xml.attributes().value("bytes").toLongLong();
+                            xml.attributes().value("bytes").toString().toLongLong();
                     } else if (xml.name().toString() == TimeStamp &&
                                xml.isStartElement()) {
                         double endTimeStamp =
-                            xml.attributes().value("time").toDouble();
+                            xml.attributes().value("time").toString().toDouble();
                         lastEntry.duration = endTimeStamp - lastEntry.duration;
                     }
                 } while (xml.name().toString() != entryType);

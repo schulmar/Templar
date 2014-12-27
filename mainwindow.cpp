@@ -356,7 +356,7 @@ void MainWindow::openTrace(const QString &fileName)
     currentFileName = fileName;
     ignoreList.clear();
 
-    if (!QFileInfo::exists(fileName))
+    if (!QFileInfo(fileName).exists())
         return;
 
     QString srcFilename = Templar::sourceFileNameFromTraceFileName(fileName);

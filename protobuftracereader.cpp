@@ -32,7 +32,7 @@ void ProtobufTraceReader::buildFromTrace(TemplightTrace const &trace,
 void ProtobufTraceReader::begin(TemplightEntry_Begin const &begin,
                                 UsedSourceFileModel &model) {
     traceEntryPtr entry(new TraceEntry());
-    entry->kind = (TraceEntry::InstantiationKind)begin.kind();
+    entry->kind = static_cast<TraceEntry::InstantiationKind>(int(begin.kind()));
     entry->context = begin.name().name().c_str();
     if (begin.location().has_file_name()) {
         QFileInfo fileInfo(begin.location().file_name().c_str());

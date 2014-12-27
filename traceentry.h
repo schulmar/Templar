@@ -86,8 +86,9 @@ struct TraceEntry {
     static const std::vector<const char *> InstantiationKindNames;
 
     TraceEntry()
-    : kind(Unknown), sourceFileId(0), id(-1), memoryUsage(0), duration(0),
-      parent(nullptr) {}
+    : kind(Unknown), instantiation(), instantiationBegin(), instantiationEnd(),
+      declarationBegin(), declarationEnd(), sourceFileId(0), id(-1), 
+      memoryUsage(0), duration(0), parent(nullptr) {}
 
     QString context;
     SourceLocation instantiation;
@@ -129,7 +130,7 @@ struct FullTreeWalker
     typedef typename EntryWalker::node_data node_data;
     node_data Apply(node_data parent_data, const TraceEntry &root, EntryWalker &walker)
     {
-        for (int i = 0; i < (int)root.children.size(); ++i)
+        for (int i = 0; i < int(root.children.size()); ++i)
         {
             Apply(walker.visit(parent_data,root,*root.children.at(i)),*root.children.at(i),walker);
         }
