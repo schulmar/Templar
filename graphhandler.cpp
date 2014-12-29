@@ -51,7 +51,7 @@ void GraphHandler::reset(const TraceEntry &/*entry*/)
 {
     undoStack.clear();
     nodeColor.clear();
-    theGraph->getScene()->clear();
+    theGraph->clearGraph();
 }
 
 void GraphHandler::inspect(const TraceEntry &entry)

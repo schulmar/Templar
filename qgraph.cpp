@@ -338,6 +338,7 @@ QGraph::clearGraph()
     QList<QGraphicsItem*> items(scene->items());
     while (!items.isEmpty())
         delete items.takeFirst();
+    scene->clear();
 }
 
 
