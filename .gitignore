@@ -4,3 +4,11 @@ moc_*
 qrc_*
 *.o
 Templar
+CMakeFiles/
+*.pb.h
+*.pb.cc
+.cproject
+.project
+.settings/
+CMakeCache.txt
+cmake_install.cmake
