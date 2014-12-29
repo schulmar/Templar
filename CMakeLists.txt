@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 
 project(Templar)
 
+option(DONT_USE_QT5 "Disables Qt5 even if present on the system" OFF)
+
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -38,11 +40,6 @@ endif()
 message(STATUS "Configured compiler options for ${CMAKE_SYSTEM_NAME} system with ${CMAKE_CXX_COMPILER_ID} toolset.")
 
 
-find_package( Qt4 REQUIRED QtCore QtGui )
-
-include( ${QT_USE_FILE} )
-
-add_definitions(${QT_DEFINITIONS})
 
 
 set( TEMPLAR_UIS
@@ -165,9 +162,34 @@ if(PROTOBUF_FOUND)
   
 endif()
 
-QT4_WRAP_UI( TEMPLAR_UI_HDRS ${TEMPLAR_UIS} )
-QT4_WRAP_CPP( TEMPLAR_MOC_SRCS ${TEMPLAR_MOC_HDRS} )# OPTIONS "-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
-QT4_ADD_RESOURCES( TEMPLAR_RESOURCES_RCC ${TEMPLAR_RESOURCES} )
+find_package(Qt5Widgets)
+if(NOT Qt5Widgets_FOUND OR DONT_USE_QT5)
+    if(DONT_USE_QT5)
+        message("Ignoring Qt5 and using Qt4 instead as requested.")
+    else()
+        message("Qt5 could not be found, falling back to Qt4")
+    endif()
+    find_package( Qt4 REQUIRED QtCore QtGui )
+
+    QT4_WRAP_UI( TEMPLAR_UI_HDRS ${TEMPLAR_UIS} )
+    QT4_WRAP_CPP( TEMPLAR_MOC_SRCS ${TEMPLAR_MOC_HDRS} )# OPTIONS "-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
+    QT4_ADD_RESOURCES( TEMPLAR_RESOURCES_RCC ${TEMPLAR_RESOURCES} )
+    include( ${QT_USE_FILE} )
+    add_definitions(${QT_DEFINITIONS})
+else()
+    find_package(Qt5Core REQUIRED)
+    message("Using Qt5")
+
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+    QT5_WRAP_CPP( TEMPLAR_MOC_SRCS ${TEMPLAR_MOC_HDRS} )# OPTIONS "-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
+    QT5_WRAP_UI( TEMPLAR_UI_HDRS ${TEMPLAR_UIS} )
+    QT5_ADD_RESOURCES( TEMPLAR_RESOURCES_RCC ${TEMPLAR_RESOURCES} )
+    include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Core_INCLUDE_DIRS})
+    add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Core_DEFINITIONS} -DUSE_QT5=1)
+    set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Core_LIBRARIES})
+endif()
+
+
 
 add_executable(Templar ${TEMPLAR_SOURCES} ${TEMPLAR_MOC_SRCS} ${TEMPLAR_UI_HDRS} ${TEMPLAR_RESOURCES_RCC})
 target_link_libraries(Templar ${QT_LIBRARIES} ${EXTRA_LIBS})
