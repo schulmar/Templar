@@ -12,6 +12,24 @@ const char* Context = "Context";
 const char* Kind = "Kind";
 const char* TimeStamp = "TimeStamp";
 const char* Memory = "MemoryUsage";
+
+#if USE_QT5
+QStringRef attributeString(QXmlStreamReader &xml, const char *attributeName) {
+	return xml.attributes().value(attributeName);
+}
+#else
+QString attributeString(QXmlStreamReader &xml, const char *attributeName) {
+	return xml.attributes().value(attributeName).toString();
+}
+#endif
+
+double attributeAsDouble(QXmlStreamReader &xml, const char *attributeName) {
+	return attributeString(xml, attributeName).toDouble();
+}
+
+qlonglong attributeAsLongLong(QXmlStreamReader &xml, const char *attributeName) {
+	return attributeString(xml, attributeName).toLongLong();
+}
 }
 
 SourceFileLocation OldXMLTraceReader::locationFromXML(QXmlStreamReader &xml) {
@@ -92,8 +110,7 @@ OldXMLTraceReader::BuildReturn OldXMLTraceReader::build(QString fileName) {
                     } else if (xml.name().toString() == TimeStamp &&
                                xml.isStartElement()) {
                         // store start for later difference calculation
-                        newEntry->duration =
-                            xml.attributes().value("time").toString().toDouble();
+                        newEntry->duration = attributeAsDouble(xml, "time");
                     }
                 } while (xml.name().toString() != entryType);
 
@@ -105,11 +122,10 @@ OldXMLTraceReader::BuildReturn OldXMLTraceReader::build(QString fileName) {
                     if (xml.name().toString() == Memory &&
                         xml.isStartElement()) {
                         lastEntry.memoryUsage =
-                            xml.attributes().value("bytes").toString().toLongLong();
+                            attributeAsLongLong(xml, "bytes");
                     } else if (xml.name().toString() == TimeStamp &&
                                xml.isStartElement()) {
-                        double endTimeStamp =
-                            xml.attributes().value("time").toString().toDouble();
+                        double endTimeStamp = attributeAsDouble(xml, "time");
                         lastEntry.duration = endTimeStamp - lastEntry.duration;
                     }
                 } while (xml.name().toString() != entryType);

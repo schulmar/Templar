@@ -130,7 +130,7 @@ struct FullTreeWalker
     typedef typename EntryWalker::node_data node_data;
     node_data Apply(node_data parent_data, const TraceEntry &root, EntryWalker &walker)
     {
-        for (int i = 0; i < int(root.children.size()); ++i)
+        for (int i = 0; i < static_cast<int>(root.children.size()); ++i)
         {
             Apply(walker.visit(parent_data,root,*root.children.at(i)),*root.children.at(i),walker);
         }

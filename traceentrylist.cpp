@@ -33,7 +33,7 @@ void EntryListModelAdapter::updateProxyData()
 QModelIndex EntryListModelAdapter::index(int row, int column,
                                          const QModelIndex & /*parent*/) const {
 
-    if(row < int(proxy.size()))
+    if(row < static_cast<int>(proxy.size()))
         return createIndex(row,column,static_cast<void*>(proxy.at(row).data()));
     else
         return QModelIndex();

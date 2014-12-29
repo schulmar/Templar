@@ -29,10 +29,23 @@ void ProtobufTraceReader::buildFromTrace(TemplightTrace const &trace,
     }
 }
 
+namespace {
+/**
+ * @brief Converts the instantiation kind stored in the file into the one used
+ * 		  in this application
+ *
+ *  This indirection might become necessary when the enums diverge
+ */
+TraceEntry::InstantiationKind
+instantiationKindFromFile(::TemplightEntry_InstantiationKind kindInFile) {
+    return static_cast<TraceEntry::InstantiationKind>(int(kindInFile));
+}
+}
+
 void ProtobufTraceReader::begin(TemplightEntry_Begin const &begin,
                                 UsedSourceFileModel &model) {
     traceEntryPtr entry(new TraceEntry());
-    entry->kind = static_cast<TraceEntry::InstantiationKind>(int(begin.kind()));
+    entry->kind = instantiationKindFromFile(begin.kind());
     entry->context = begin.name().name().c_str();
     if (begin.location().has_file_name()) {
         QFileInfo fileInfo(begin.location().file_name().c_str());

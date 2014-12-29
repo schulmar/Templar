@@ -15,9 +15,9 @@ class EntryListModelAdapter : public QAbstractListModel
     EntryListModelAdapter(QObject *parent, const TraceEntry &entry,
                           UsedSourceFileModel *usedSourceFileModel);
     int columnCount(const QModelIndex &) const override;
-    virtual int rowCount(const QModelIndex &) const { return entry.children.size();}
-    virtual QVariant data(const QModelIndex &index, int role) const;
-    virtual QModelIndex index(int row, int column, const QModelIndex &parent) const;
+    int rowCount(const QModelIndex &) const override { return entry.children.size();}
+    QVariant data(const QModelIndex &index, int role) const override;
+    QModelIndex index(int row, int column, const QModelIndex &parent) const override;
     void updateProxyData();
     QVariant headerData(int section, Qt::Orientation orientation,
                         int role = Qt::DisplayRole) const override;
