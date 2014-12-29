@@ -24,7 +24,7 @@ void DebugManager::setUsedFileModel(UsedSourceFileModel *usedSourceFiles)
     usedFiles = usedSourceFiles;
     for(int i=0;i<this->eventHandlers.size();++i)
     {
-        this->eventHandlers.at(i)->SetUsedFileModel(usedSourceFiles);
+        this->eventHandlers[i]->SetUsedFileModel(usedSourceFiles);
     }
 }
 
@@ -55,9 +55,10 @@ void DebugManager::next()
             historyPos = navigationHistory.size()-1;
         }
     }
+    if(navigationHistory.empty() || navigationHistory[historyPos] == nullptr)
+        return; // if history still empty, exit this function.
     for (int i = 0; i < this->eventHandlers.size(); ++i)
         eventHandlers[i]->handleEvent(*navigationHistory[historyPos]);
-
 }
 
 void DebugManager::prev(){

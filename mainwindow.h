@@ -29,6 +29,7 @@ class QGraphicsScene;
 class Highlighter;
 class CodeEditor;
 class QGraph;
+class QModelIndex;
 class QTableView;
 class QTreeView;
 class EntryInfo;

@@ -53,7 +53,7 @@ QModelIndex UsedSourceFileModel::index(int row, int column, const QModelIndex &p
              parentItem = static_cast<const SourceFileNode*>(parent.internalPointer());
 
          if(row < parentItem->children.size())
-              return createIndex(row,column,(void*)(parentItem->children.at(row)));
+              return createIndex(row,column,static_cast<void*>(parentItem->children.at(row)));
          else
              return QModelIndex();
 }
