@@ -40,78 +40,30 @@ endif()
 message(STATUS "Configured compiler options for ${CMAKE_SYSTEM_NAME} system with ${CMAKE_CXX_COMPILER_ID} toolset.")
 
 
-
-
-set( TEMPLAR_UIS
-  "mainwindow.ui"
-  "sourceviewer.ui"
-  "entryinfo.ui"
-  "stringlistdialog.ui"
-  "entryfiltersettings.ui"
-  "colorpreferencesdialog.ui"
-)
-set( TEMPLAR_MOC_HDRS 
-  "mainwindow.h"
-  "tracereader.h"
-  "traceentry.h"
-  "templateeventhandler.h"
-  "sourceviewer.h"
-  "listwidgethandler.h"
-  "highlighter.h"
-  "graphvizbuilder.h"
-  "graphhandler.h"
-  "entryvectorbuilder.h"
-  "entryinfo.h"
-  "editorhandler.h"
-  "debugmanager.h"
-  "common.h"
-  "codeeditor.h"
-  "builder.h"
-  "entryinfohandler.h"
-  "stringlistdialog.h"
-  "qgraph.h"
-  "usedsourcefilemodel.h"
-  "entryfiltersettings.h"
-  "colorpreferencesdialog.h"
-  "settingsnames.h"
-  "oldxmltracereader.h"
-  "protobuftracereader.h"
-  "binarytracereader.h"
-  "traceentrylist.h"
-)
-set(TEMPLAR_SOURCES 
-  "main.cpp"
-  "mainwindow.cpp"
-  "tracereader.cpp"
-  "templateeventhandler.cpp"
-  "sourceviewer.cpp"
-  "listwidgethandler.cpp"
-  "highlighter.cpp"
-  "graphvizbuilder.cpp"
-  "graphhandler.cpp"
-  "entryvectorbuilder.cpp"
-  "entryinfo.cpp"
-  "editorhandler.cpp"
-  "debugmanager.cpp"
-  "codeeditor.cpp"
-  "builder.cpp"
-  "entryinfohandler.cpp"
-  "stringlistdialog.cpp"
-  "qgraph.cpp"
-  "traceentry.cpp"
-  "usedsourcefilemodel.cpp"
-  "entryfiltersettings.cpp"
-  "colorpreferencesdialog.cpp"
-  "settingsnames.cpp"
-  "oldxmltracereader.cpp"
-  "protobuftracereader.cpp"
-  "binarytracereader.cpp"
-  "traceentrylist.cpp"
-)
-
-set(TEMPLAR_RESOURCES
-  "resources.qrc"
-)
+find_package(Qt5Widgets)
+if(NOT Qt5Widgets_FOUND OR DONT_USE_QT5)
+    if(DONT_USE_QT5)
+        message("Ignoring Qt5 and using Qt4 instead as requested.")
+    else()
+        message("Qt5 could not be found, falling back to Qt4")
+    endif()
+    
+    find_package( Qt4 REQUIRED QtCore QtGui )
+    
+    include( ${QT_USE_FILE} )
+    add_definitions(${QT_DEFINITIONS})
+    
+else()
+    find_package(Qt5Core REQUIRED)
+    set(USING_QT5 TRUE)
+    message("Using Qt5")
+    
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
+    include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Core_INCLUDE_DIRS})
+    add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Core_DEFINITIONS} -DUSE_QT5=1)
+    set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Core_LIBRARIES})
+    
+endif()
 
 
 find_package(PkgConfig)
@@ -162,34 +114,89 @@ if(PROTOBUF_FOUND)
   
 endif()
 
-find_package(Qt5Widgets)
-if(NOT Qt5Widgets_FOUND OR DONT_USE_QT5)
-    if(DONT_USE_QT5)
-        message("Ignoring Qt5 and using Qt4 instead as requested.")
-    else()
-        message("Qt5 could not be found, falling back to Qt4")
-    endif()
-    find_package( Qt4 REQUIRED QtCore QtGui )
 
-    QT4_WRAP_UI( TEMPLAR_UI_HDRS ${TEMPLAR_UIS} )
-    QT4_WRAP_CPP( TEMPLAR_MOC_SRCS ${TEMPLAR_MOC_HDRS} )# OPTIONS "-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
-    QT4_ADD_RESOURCES( TEMPLAR_RESOURCES_RCC ${TEMPLAR_RESOURCES} )
-    include( ${QT_USE_FILE} )
-    add_definitions(${QT_DEFINITIONS})
+
+set( TEMPLAR_UIS
+  "mainwindow.ui"
+  "sourceviewer.ui"
+  "entryinfo.ui"
+  "stringlistdialog.ui"
+  "entryfiltersettings.ui"
+  "colorpreferencesdialog.ui"
+)
+
+set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS} 
+  "mainwindow.h"
+  "tracereader.h"
+  "traceentry.h"
+  "templateeventhandler.h"
+  "sourceviewer.h"
+  "listwidgethandler.h"
+  "highlighter.h"
+  "graphvizbuilder.h"
+  "graphhandler.h"
+  "entryvectorbuilder.h"
+  "entryinfo.h"
+  "editorhandler.h"
+  "debugmanager.h"
+  "common.h"
+  "codeeditor.h"
+  "builder.h"
+  "entryinfohandler.h"
+  "stringlistdialog.h"
+  "qgraph.h"
+  "usedsourcefilemodel.h"
+  "entryfiltersettings.h"
+  "colorpreferencesdialog.h"
+  "settingsnames.h"
+  "oldxmltracereader.h"
+  "protobuftracereader.h"
+  "binarytracereader.h"
+  "traceentrylist.h"
+)
+set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES} 
+  "main.cpp"
+  "mainwindow.cpp"
+  "tracereader.cpp"
+  "templateeventhandler.cpp"
+  "sourceviewer.cpp"
+  "listwidgethandler.cpp"
+  "highlighter.cpp"
+  "graphvizbuilder.cpp"
+  "graphhandler.cpp"
+  "entryvectorbuilder.cpp"
+  "entryinfo.cpp"
+  "editorhandler.cpp"
+  "debugmanager.cpp"
+  "codeeditor.cpp"
+  "builder.cpp"
+  "entryinfohandler.cpp"
+  "stringlistdialog.cpp"
+  "qgraph.cpp"
+  "traceentry.cpp"
+  "usedsourcefilemodel.cpp"
+  "entryfiltersettings.cpp"
+  "colorpreferencesdialog.cpp"
+  "settingsnames.cpp"
+  "oldxmltracereader.cpp"
+  "protobuftracereader.cpp"
+  "binarytracereader.cpp"
+  "traceentrylist.cpp"
+)
+
+set(TEMPLAR_RESOURCES
+  "resources.qrc"
+)
+
+if(USING_QT5)
+  QT5_WRAP_CPP( TEMPLAR_MOC_SRCS ${TEMPLAR_MOC_HDRS} )# OPTIONS "-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
+  QT5_WRAP_UI( TEMPLAR_UI_HDRS ${TEMPLAR_UIS} )
+  QT5_ADD_RESOURCES( TEMPLAR_RESOURCES_RCC ${TEMPLAR_RESOURCES} )
 else()
-    find_package(Qt5Core REQUIRED)
-    message("Using Qt5")
-
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-    QT5_WRAP_CPP( TEMPLAR_MOC_SRCS ${TEMPLAR_MOC_HDRS} )# OPTIONS "-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
-    QT5_WRAP_UI( TEMPLAR_UI_HDRS ${TEMPLAR_UIS} )
-    QT5_ADD_RESOURCES( TEMPLAR_RESOURCES_RCC ${TEMPLAR_RESOURCES} )
-    include_directories(${Qt5Widgets_INCLUDE_DIRS} ${Qt5Core_INCLUDE_DIRS})
-    add_definitions(${Qt5Widgets_DEFINITIONS} ${Qt5Core_DEFINITIONS} -DUSE_QT5=1)
-    set(QT_LIBRARIES ${Qt5Widgets_LIBRARIES} ${Qt5Core_LIBRARIES})
+  QT4_WRAP_UI( TEMPLAR_UI_HDRS ${TEMPLAR_UIS} )
+  QT4_WRAP_CPP( TEMPLAR_MOC_SRCS ${TEMPLAR_MOC_HDRS} )# OPTIONS "-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
+  QT4_ADD_RESOURCES( TEMPLAR_RESOURCES_RCC ${TEMPLAR_RESOURCES} )
 endif()
-
-
 
 add_executable(Templar ${TEMPLAR_SOURCES} ${TEMPLAR_MOC_SRCS} ${TEMPLAR_UI_HDRS} ${TEMPLAR_RESOURCES_RCC})
 target_link_libraries(Templar ${QT_LIBRARIES} ${EXTRA_LIBS})
