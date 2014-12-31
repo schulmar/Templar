@@ -86,8 +86,6 @@ OldXMLTraceReader::BuildReturn OldXMLTraceReader::build(QString fileName) {
 
     SourceFileIdAccumulator sourceFilesAccumulator(getDirPath());
 
-    int counter = 0;
-
     while (!xml.atEnd()) {
         xml.readNext();
         QString entryType = xml.name().toString();
@@ -95,7 +93,6 @@ OldXMLTraceReader::BuildReturn OldXMLTraceReader::build(QString fileName) {
         if (xml.isStartElement()) {
             if (entryType == TemplateBegin) {
                 traceEntryPtr newEntry(new TraceEntry{});
-                newEntry->id = counter++;
                 do {
                     xml.readNext();
                     if (xml.name().toString() == Context &&

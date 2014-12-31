@@ -74,6 +74,7 @@ TraceEntry::InstantiationKind entryKindFromString(QString name) {
 }
 
 void TraceReader::beginEntry(traceEntryPtr entry) {
+	entry->id = entryCounter;
     ++entryCounter;
     entry->parent = childVectorStack.top();
     childVectorStack.top()->children.push_back(entry);
