@@ -8,6 +8,7 @@ namespace {
 const char* TemplateBegin = "TemplateBegin";
 const char* TemplateEnd = "TemplateEnd";
 const char* Position = "PointOfInstantiation";
+const char* Location = "Location";
 const char* Context = "Context";
 const char* Kind = "Kind";
 const char* TimeStamp = "TimeStamp";
@@ -32,8 +33,17 @@ qlonglong attributeAsLongLong(QXmlStreamReader &xml, const char *attributeName) 
 }
 }
 
-SourceFileLocation OldXMLTraceReader::locationFromXML(QXmlStreamReader &xml) {
+SourceFileLocation OldXMLTraceReader::locationFromXMLPosition(QXmlStreamReader &xml) {
   assert(xml.name().toString() == Position);
+  return locationFromXMLContent(xml);
+}
+
+SourceFileLocation OldXMLTraceReader::locationFromXMLLocation(QXmlStreamReader &xml) {
+  assert(xml.name().toString() == Location);
+  return locationFromXMLContent(xml);
+}
+
+SourceFileLocation OldXMLTraceReader::locationFromXMLContent(QXmlStreamReader &xml) {
   auto components = xml.readElementText().split('|');
   return SourceFileLocation{components[0], components[1].toUInt(),
                             components[2].toUInt()};
@@ -57,7 +67,9 @@ OldXMLTraceReader::readSourceFiles(const QString &fileName) {
             do {
                 xml.readNext();
                 if (xml.name().toString() == Position && xml.isStartElement()) {
-                    sourceFilesAccumulator.addLocation(locationFromXML(xml));
+                    sourceFilesAccumulator.addLocation(locationFromXMLPosition(xml));
+                } else if(xml.name().toString() == Location){
+                	sourceFilesAccumulator.addLocation(locationFromXMLLocation(xml));
                 }
             } while (xml.name().toString() != entryType);
         }
@@ -90,11 +102,14 @@ OldXMLTraceReader::BuildReturn OldXMLTraceReader::build(QString fileName) {
                         xml.isStartElement()) {
                         newEntry->context =
                             xml.attributes().value("context").toString();
-                    } else if (xml.name().toString() == Position &&
+                    } else if ((xml.name().toString() == Position ||
+                                xml.name().toString() == Location) &&
                                xml.isStartElement()) {
                         newEntry->instantiation =
                             sourceFilesAccumulator.addLocation(
-                                locationFromXML(xml));
+                                (xml.name().toString() == Position)
+                                    ? locationFromXMLPosition(xml)
+                                    : locationFromXMLLocation(xml));
                         newEntry->instantiationEnd =
                             newEntry->instantiationBegin =
                                 newEntry->instantiation;
