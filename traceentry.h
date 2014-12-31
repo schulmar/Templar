@@ -122,6 +122,7 @@ struct TraceEntry {
     };
     static iterator end() { return iterator(); }
     iterator begin() { return iterator(this); }
+    void clear() { children.clear(); }
 };
 
 template <typename EntryWalker>

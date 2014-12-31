@@ -258,6 +258,7 @@ void MainWindow::reset() {
     GraphvizBuilder graphvizBuilder;
     EntryVectorBuilder vecBuilder;
 
+    debugManager->getEntryTarget().clear();
     usedFiles = TraceReader::build(currentFileName, debugManager->getEntryTarget(), dirPath);
     QObject::connect(
         usedFiles.get(), SIGNAL(dataChanged(QModelIndex, QModelIndex)),
