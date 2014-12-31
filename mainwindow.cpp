@@ -255,9 +255,6 @@ void MainWindow::reset() {
 
     QString dirPath = currentFileName.left(currentFileName.lastIndexOf("/") + 1);
 
-    GraphvizBuilder graphvizBuilder;
-    EntryVectorBuilder vecBuilder;
-
     debugManager->getEntryTarget().clear();
     usedFiles = TraceReader::build(currentFileName, debugManager->getEntryTarget(), dirPath);
     QObject::connect(
@@ -269,9 +266,6 @@ void MainWindow::reset() {
     entryProxyModel->setUsedSourceFileModel(usedFiles.get());
 
     debugManager->reset();
-
-    graphHandler->setGvc(graphvizBuilder.getGvc());
-    graphHandler->setNodeGraphMap(graphvizBuilder.getNodeGraphMap());
 }
 
 void MainWindow::filterActionClicked()
