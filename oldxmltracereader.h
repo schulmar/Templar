@@ -15,7 +15,9 @@ struct OldXMLTraceReader : TraceReader {
 
     BuildReturn build(QString fileName) override;
   private:
-    static SourceFileLocation locationFromXML(QXmlStreamReader &xml);
+    static SourceFileLocation locationFromXMLPosition(QXmlStreamReader &xml);
+    static SourceFileLocation locationFromXMLLocation(QXmlStreamReader &xml);
+    static SourceFileLocation locationFromXMLContent(QXmlStreamReader &xml);
 };
 
 }
