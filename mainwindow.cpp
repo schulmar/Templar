@@ -369,6 +369,10 @@ void MainWindow::openTrace(const QString &fileName)
     } catch (Templar::FileException *) {
       QMessageBox::warning(this, tr("Error"), tr("Can't open trace file"));
       return;
+    } catch (std::runtime_error const &error) {
+        QMessageBox::warning(this, tr("Error"),
+                             tr("Could not load trace file:\n") + error.what());
+        return;
     } catch (...) {
       QMessageBox::warning(this, tr("Error"),
                            tr("Can't build graph from trace file"));

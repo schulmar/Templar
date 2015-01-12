@@ -26,7 +26,15 @@ TraceReader::BuildReturn TraceReader::build(QString fileName, TraceEntry &entry,
         reader = make_unique<BinaryTraceReader>(entry);
     }
     reader->setDirPath(dirPath);
-    return reader->build(fileName);
+    auto result = reader->build(fileName);
+    if (reader->childVectorStack.size() != 1) {
+        throw std::runtime_error(
+            __FILE__ ": Unbalanced instantiation tree (more "
+                     "closing than opening entries): " +
+            std::to_string(reader->childVectorStack.size() - 1) +
+            " open entries remaining");
+    }
+    return result;
 }
 
 namespace {
@@ -83,7 +91,12 @@ void TraceReader::beginEntry(traceEntryPtr entry) {
 
 TraceEntry & TraceReader::endEntry() {
   TraceEntry &lastEntry = *childVectorStack.top();
-  childVectorStack.pop();
+  if(childVectorStack.size() > 1) {
+	  childVectorStack.pop();
+  } else {
+      throw std::runtime_error(__FILE__ ": Unbalanced instantiation tree (more "
+                                        "closing than opening entries)");
+  }
   return lastEntry;
 }
 
