@@ -38,9 +38,10 @@
 **
 ****************************************************************************/
 
+#include "../gui/codeeditor.h"
+
 #include <QtGui>
 
-#include "codeeditor.h"
 #include "traceentry.h"
 
 //![constructor]

@@ -1,4 +1,5 @@
-#include "sourceviewer.h"
+#include "../gui/sourceviewer.h"
+
 #include "ui_sourceviewer.h"
 #include "highlighter.h"
 

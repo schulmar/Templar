@@ -1,4 +1,5 @@
-#include "stringlistdialog.h"
+#include "../gui/stringlistdialog.h"
+
 #include "ui_stringlistdialog.h"
 #include <QStringList>
 #include <QInputDialog>

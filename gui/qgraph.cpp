@@ -10,6 +10,8 @@
  */
 
 
+#include "../gui/qgraph.h"
+
 #include <math.h>
 
 #include <QKeyEvent>
@@ -18,7 +20,6 @@
 
 #include <QDebug>
 #include "common.h"
-#include "qgraph.h"
 #include "qt_version_switch.h"
 
 const QColor ActiveColor = Qt::darkBlue;

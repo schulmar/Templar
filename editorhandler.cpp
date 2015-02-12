@@ -1,6 +1,6 @@
 #include "editorhandler.h"
 #include "traceentry.h"
-#include "codeeditor.h"
+#include "gui/codeeditor.h"
 #include "highlighter.h"
 #include "usedsourcefilemodel.h"
 

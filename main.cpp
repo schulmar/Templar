@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QSettings>
 #include <QColor>
-#include "mainwindow.h"
+#include "gui/mainwindow.h"
 #include "common.h"
 #include "settingsnames.h"
 

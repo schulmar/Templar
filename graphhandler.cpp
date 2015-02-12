@@ -2,7 +2,7 @@
 #include <cstdlib>
 
 #include "graphhandler.h"
-#include "qgraph.h"
+#include "gui/qgraph.h"
 #include "traceentry.h"
 #include "common.h"
 

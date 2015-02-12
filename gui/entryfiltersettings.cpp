@@ -1,4 +1,5 @@
-#include "entryfiltersettings.h"
+#include "../gui/entryfiltersettings.h"
+
 #include "ui_entryfiltersettings.h"
 
 EntryFilterSettings::EntryFilterSettings(QWidget *parent) :

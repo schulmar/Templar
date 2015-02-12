@@ -1,4 +1,5 @@
-#include "colorpreferencesdialog.h"
+#include "../gui/colorpreferencesdialog.h"
+
 #include "ui_colorpreferencesdialog.h"
 #include "common.h"
 #include <QColorDialog>

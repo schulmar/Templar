@@ -1,10 +1,9 @@
-#include "mainwindow.h"
+#include "../gui/mainwindow.h"
+
 #include "ui_mainwindow.h"
 #include "debugmanager.h"
 #include "common.h"
 #include "highlighter.h"
-#include "codeeditor.h"
-#include "qgraph.h"
 #include "entryvectorbuilder.h"
 #include "graphvizbuilder.h"
 #include "tracereaders/tracereader.h"
@@ -12,13 +11,10 @@
 #include "listwidgethandler.h"
 #include "entryinfo.h"
 #include "entryinfohandler.h"
-#include "stringlistdialog.h"
 #include "usedsourcefilemodel.h"
 #include "traceentry.h"
-#include "colorpreferencesdialog.h"
 #include "traceentrylist.h"
 
-#include "entryfiltersettings.h"
 #include "settingsnames.h"
 
 #include <algorithm>
@@ -37,6 +33,11 @@
 #include <QSettings>
 #include <QFileInfo>
 #include <QDebug>
+#include "../gui/codeeditor.h"
+#include "../gui/colorpreferencesdialog.h"
+#include "../gui/entryfiltersettings.h"
+#include "../gui/qgraph.h"
+#include "../gui/stringlistdialog.h"
 
 //TODO unused variable: static const int BigGraph = 200;
 
