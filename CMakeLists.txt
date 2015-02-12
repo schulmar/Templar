@@ -125,16 +125,15 @@ set( TEMPLAR_UIS
   "gui/colorpreferencesdialog.ui"
 )
 
-set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS}
-  "graphvizvisitor.h" 
+set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS} 
   "traceentry.h"
-  "highlighter.h"
-  "debugmanager.h"
   "common.h"
   "usedsourcefilemodel.h"
   "settingsnames.h"
-  "traceentrylist.h"
+  "traceentrylistfilterproxy.hpp"
   
+  "gui/debugmanager.h"
+  "gui/highlighter.h"
   "gui/entryinfo.h"
   "gui/mainwindow.h"
   "gui/sourceviewer.h"
@@ -144,6 +143,8 @@ set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS}
   "gui/entryfiltersettings.h"
   "gui/colorpreferencesdialog.h"
   
+  "templateeventhandlers/traceentrylist.h"
+  "templateeventhandlers/graphvizvisitor.h"
   "templateeventhandlers/templateeventhandler.h"
   "templateeventhandlers/listwidgethandler.h"
   "templateeventhandlers/graphhandler.h"
@@ -156,15 +157,14 @@ set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS}
   "tracereaders/binarytracereader.h"
 )
 set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES}
-  "graphvizvisitor.cpp" 
   "main.cpp"
-  "highlighter.cpp"
-  "debugmanager.cpp"
   "traceentry.cpp"
   "usedsourcefilemodel.cpp"
   "settingsnames.cpp"
-  "traceentrylist.cpp"
+  "traceentrylistfilterproxy.cpp"
   
+  "gui/debugmanager.cpp"
+  "gui/highlighter.cpp"
   "gui/entryinfo.cpp"
   "gui/mainwindow.cpp"
   "gui/sourceviewer.cpp"
@@ -174,6 +174,8 @@ set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES}
   "gui/entryfiltersettings.cpp"
   "gui/colorpreferencesdialog.cpp"
   
+  "templateeventhandlers/traceentrylist.cpp"
+  "templateeventhandlers/graphvizvisitor.cpp"
   "templateeventhandlers/templateeventhandler.cpp"
   "templateeventhandlers/listwidgethandler.cpp"
   "templateeventhandlers/graphhandler.cpp"

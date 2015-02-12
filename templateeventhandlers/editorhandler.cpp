@@ -1,7 +1,6 @@
 #include "editorhandler.h"
 #include "traceentry.h"
 #include "gui/codeeditor.h"
-#include "highlighter.h"
 #include "usedsourcefilemodel.h"
 
 #include <QString>

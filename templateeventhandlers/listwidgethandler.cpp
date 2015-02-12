@@ -2,6 +2,7 @@
 #include "traceentry.h"
 #include "usedsourcefilemodel.h"
 #include "traceentrylist.h"
+#include <QSortFilterProxyModel>
 
 //#include <QListView>
 #include <QTableView>

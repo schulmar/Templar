@@ -11,7 +11,6 @@
 #include "templateeventhandlers/entryinfohandler.h"
 #include "usedsourcefilemodel.h"
 #include "traceentry.h"
-#include "traceentrylist.h"
 
 #include "settingsnames.h"
 
@@ -36,6 +35,7 @@
 #include "../gui/entryfiltersettings.h"
 #include "../gui/qgraph.h"
 #include "../gui/stringlistdialog.h"
+#include "traceentrylistfilterproxy.hpp"
 
 //TODO unused variable: static const int BigGraph = 200;
 
