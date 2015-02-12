@@ -1,6 +1,6 @@
 #include "entryinfohandler.h"
 #include "traceentry.h"
-#include "entryinfo.h"
+#include "gui/entryinfo.h"
 
 namespace Templar {
 
