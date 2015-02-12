@@ -10,7 +10,7 @@
 
 #include <graphviz/gvc.h>
 
-#include "graphhandler.h"
+#include "templateeventhandlers/graphhandler.h"
 
 namespace Ui
 {

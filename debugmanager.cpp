@@ -1,7 +1,7 @@
 #include "debugmanager.h"
 #include "graphvizbuilder.h"
 #include "common.h"
-#include "templateeventhandler.h"
+#include "templateeventhandlers/templateeventhandler.h"
 #include "usedsourcefilemodel.h"
 #include <QDir>
 #include <QXmlStreamReader>

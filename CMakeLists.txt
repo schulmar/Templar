@@ -127,18 +127,13 @@ set( TEMPLAR_UIS
 
 set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS} 
   "traceentry.h"
-  "templateeventhandler.h"
-  "listwidgethandler.h"
   "highlighter.h"
   "graphvizbuilder.h"
-  "graphhandler.h"
   "entryvectorbuilder.h"
   "entryinfo.h"
-  "editorhandler.h"
   "debugmanager.h"
   "common.h"
   "builder.h"
-  "entryinfohandler.h"
   "usedsourcefilemodel.h"
   "settingsnames.h"
   "traceentrylist.h"
@@ -151,6 +146,12 @@ set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS}
   "gui/entryfiltersettings.h"
   "gui/colorpreferencesdialog.h"
   
+  "templateeventhandlers/templateeventhandler.h"
+  "templateeventhandlers/listwidgethandler.h"
+  "templateeventhandlers/graphhandler.h"
+  "templateeventhandlers/editorhandler.h"
+  "templateeventhandlers/entryinfohandler.h"
+  
   "tracereaders/tracereader.h"
   "tracereaders/oldxmltracereader.h"
   "tracereaders/protobuftracereader.h"
@@ -158,17 +159,12 @@ set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS}
 )
 set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES} 
   "main.cpp"
-  "templateeventhandler.cpp"
-  "listwidgethandler.cpp"
   "highlighter.cpp"
   "graphvizbuilder.cpp"
-  "graphhandler.cpp"
   "entryvectorbuilder.cpp"
   "entryinfo.cpp"
-  "editorhandler.cpp"
   "debugmanager.cpp"
   "builder.cpp"
-  "entryinfohandler.cpp"
   "traceentry.cpp"
   "usedsourcefilemodel.cpp"
   "settingsnames.cpp"
@@ -181,6 +177,12 @@ set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES}
   "gui/qgraph.cpp"
   "gui/entryfiltersettings.cpp"
   "gui/colorpreferencesdialog.cpp"
+  
+  "templateeventhandlers/templateeventhandler.cpp"
+  "templateeventhandlers/listwidgethandler.cpp"
+  "templateeventhandlers/graphhandler.cpp"
+  "templateeventhandlers/editorhandler.cpp"
+  "templateeventhandlers/entryinfohandler.cpp"
   
   "tracereaders/tracereader.cpp"
   "tracereaders/oldxmltracereader.cpp"
