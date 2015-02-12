@@ -14,7 +14,7 @@
 #include <graphviz/gvc.h>
 
 #include "templateeventhandler.h"
-#include "graphvizbuilder.h"
+#include "traceentry.h"
 
 class QGraph;
 
@@ -23,8 +23,9 @@ namespace Templar {
 class GraphHandler : public TemplateEventHandler
 {
 public:
-    typedef GraphvizBuilder::NodeId NodeId;
-    typedef GraphvizBuilder::NodeIdToGraph NodeIdToGraph;
+
+    using NodeId = int;
+	using NodeIdToGraph = QMap<NodeId, QSharedPointer<graph_t> >;
 
     GraphHandler(QGraph *qGraph);
     virtual ~GraphHandler() {}

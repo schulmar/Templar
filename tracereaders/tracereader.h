@@ -5,9 +5,9 @@
 #include <QRegExp>
 #include <QList>
 #include <stack>
-#include "builder.h"
 #include <memory>
 #include "usedsourcefilemodel.h"
+#include "traceentry.h"
 
 namespace Templar {
 

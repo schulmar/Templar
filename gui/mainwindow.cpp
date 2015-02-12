@@ -4,8 +4,6 @@
 #include "debugmanager.h"
 #include "common.h"
 #include "highlighter.h"
-#include "entryvectorbuilder.h"
-#include "graphvizbuilder.h"
 #include "tracereaders/tracereader.h"
 #include "templateeventhandlers/editorhandler.h"
 #include "templateeventhandlers/listwidgethandler.h"

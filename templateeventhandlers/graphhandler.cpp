@@ -5,6 +5,7 @@
 #include "gui/qgraph.h"
 #include "traceentry.h"
 #include "common.h"
+#include "graphvizvisitor.h"
 
 namespace Templar {
 

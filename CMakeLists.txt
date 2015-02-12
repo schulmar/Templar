@@ -125,15 +125,13 @@ set( TEMPLAR_UIS
   "gui/colorpreferencesdialog.ui"
 )
 
-set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS} 
+set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS}
+  "graphvizvisitor.h" 
   "traceentry.h"
   "highlighter.h"
-  "graphvizbuilder.h"
-  "entryvectorbuilder.h"
   "entryinfo.h"
   "debugmanager.h"
   "common.h"
-  "builder.h"
   "usedsourcefilemodel.h"
   "settingsnames.h"
   "traceentrylist.h"
@@ -157,14 +155,12 @@ set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS}
   "tracereaders/protobuftracereader.h"
   "tracereaders/binarytracereader.h"
 )
-set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES} 
+set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES}
+  "graphvizvisitor.cpp" 
   "main.cpp"
   "highlighter.cpp"
-  "graphvizbuilder.cpp"
-  "entryvectorbuilder.cpp"
   "entryinfo.cpp"
   "debugmanager.cpp"
-  "builder.cpp"
   "traceentry.cpp"
   "usedsourcefilemodel.cpp"
   "settingsnames.cpp"

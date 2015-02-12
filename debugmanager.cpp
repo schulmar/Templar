@@ -1,5 +1,4 @@
 #include "debugmanager.h"
-#include "graphvizbuilder.h"
 #include "common.h"
 #include "templateeventhandlers/templateeventhandler.h"
 #include "usedsourcefilemodel.h"
