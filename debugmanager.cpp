@@ -1,6 +1,5 @@
 #include "debugmanager.h"
 #include "graphvizbuilder.h"
-#include "tracereader.h"
 #include "common.h"
 #include "templateeventhandler.h"
 #include "usedsourcefilemodel.h"

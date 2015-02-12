@@ -72,8 +72,8 @@ if(YamlCpp_FOUND)
   add_definitions(-DYAML_TRACEFILE_SUPPORT=1)
   include_directories(${YamlCpp_INCLUDE_DIRS})
   set(EXTRA_LIBS ${EXTRA_LIBS} ${YamlCpp_LIBRARIES})
-  set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES} "yamltracereader.cpp")
-  set(TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS} "yamltracereader.h")
+  set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES} "tracereaders/yamltracereader.cpp")
+  set(TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS} "tracereaders/yamltracereader.h")
 endif()
 
 find_library(GVC_LIB gvc)
@@ -127,7 +127,6 @@ set( TEMPLAR_UIS
 
 set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS} 
   "mainwindow.h"
-  "tracereader.h"
   "traceentry.h"
   "templateeventhandler.h"
   "sourceviewer.h"
@@ -149,15 +148,15 @@ set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS}
   "entryfiltersettings.h"
   "colorpreferencesdialog.h"
   "settingsnames.h"
-  "oldxmltracereader.h"
-  "protobuftracereader.h"
-  "binarytracereader.h"
+  "tracereaders/tracereader.h"
+  "tracereaders/oldxmltracereader.h"
+  "tracereaders/protobuftracereader.h"
+  "tracereaders/binarytracereader.h"
   "traceentrylist.h"
 )
 set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES} 
   "main.cpp"
   "mainwindow.cpp"
-  "tracereader.cpp"
   "templateeventhandler.cpp"
   "sourceviewer.cpp"
   "listwidgethandler.cpp"
@@ -178,9 +177,10 @@ set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES}
   "entryfiltersettings.cpp"
   "colorpreferencesdialog.cpp"
   "settingsnames.cpp"
-  "oldxmltracereader.cpp"
-  "protobuftracereader.cpp"
-  "binarytracereader.cpp"
+  "tracereaders/tracereader.cpp"
+  "tracereaders/oldxmltracereader.cpp"
+  "tracereaders/protobuftracereader.cpp"
+  "tracereaders/binarytracereader.cpp"
   "traceentrylist.cpp"
 )
 

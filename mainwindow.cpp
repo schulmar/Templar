@@ -7,7 +7,7 @@
 #include "qgraph.h"
 #include "entryvectorbuilder.h"
 #include "graphvizbuilder.h"
-#include "tracereader.h"
+#include "tracereaders/tracereader.h"
 #include "editorhandler.h"
 #include "listwidgethandler.h"
 #include "entryinfo.h"
@@ -17,7 +17,6 @@
 #include "traceentry.h"
 #include "colorpreferencesdialog.h"
 #include "traceentrylist.h"
-#include "binarytracereader.h"
 
 #include "entryfiltersettings.h"
 #include "settingsnames.h"
