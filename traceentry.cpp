@@ -22,7 +22,7 @@ TraceEntry::iterator::iterator(const TraceEntry *first)
 
 }
 
-TraceEntry const *TraceEntry::iterator::moveToNextSibling(TraceEntry const *entry)
+TraceEntry const *TraceEntry::iterator::moveToNextSibling(TraceEntry const *entry) const
 {
     if(entry->parent!=nullptr)
     {
@@ -42,17 +42,13 @@ TraceEntry const *TraceEntry::iterator::moveToNextSibling(TraceEntry const *entr
     return nullptr;
 }
 
-TraceEntry::iterator& TraceEntry::iterator::operator++()
+void TraceEntry::iterator::increment()
 {
-    if(currentEntry==nullptr)
-        return *this;
-    if(currentEntry->children.empty())
-    {
-        currentEntry = moveToNextSibling(currentEntry);
+    if(currentEntry) {
+        currentEntry = currentEntry->children.empty()
+                           ? moveToNextSibling(currentEntry)
+                           : currentEntry->children.front().data();
     }
-    else
-        currentEntry = currentEntry->children.front().data();
-    return *this;
 }
 
 }

@@ -6,6 +6,7 @@
 #include <QSharedPointer>
 #include <QMap>
 #include <QMetaType>
+#include <boost/iterator/iterator_facade.hpp>
 
 namespace Templar{
 
@@ -103,22 +104,25 @@ struct TraceEntry {
     TraceEntry *parent;
     QVector<traceEntryPtr> children;
 
-    struct iterator
-    {
+    struct iterator : boost::iterator_facade<iterator, TraceEntry const,
+                                             std::forward_iterator_tag> {
         iterator(TraceEntry const *first=nullptr);
-        TraceEntry const *operator->() { return currentEntry; }
+    private:
+        friend class boost::iterator_core_access;
 
-        TraceEntry const *moveToNextSibling(TraceEntry const*entry);
-        iterator& operator++();
+        bool equal(const iterator &other) const {
+        	return other.currentEntry == currentEntry;
+        }
 
-        bool operator==(const iterator &itr) const
-        { return itr.currentEntry == currentEntry; }
-        bool operator!=(const iterator &itr) const
-        { return !(*this==itr); }
+        void increment();
+        reference dereference() const {
+        	return *currentEntry;
+        }
+
+        TraceEntry const *moveToNextSibling(TraceEntry const *entry) const;
 
         TraceEntry const *currentEntry;
         TraceEntry const *root;
-
     };
     static iterator end() { return iterator(); }
     iterator begin() { return iterator(this); }
