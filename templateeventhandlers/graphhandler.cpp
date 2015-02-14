@@ -67,7 +67,20 @@ void GraphHandler::changeGraph(const TraceEntry &entry)
     GraphvizVisitor newVisitor(gvc);
     FullTreeWalker<GraphvizVisitor> graphWalker;
     TraceEntry dummy;
-    graphWalker.Apply(newVisitor.visit(nullptr,dummy,entry),entry,newVisitor);
+    if (entry.parent) {
+    	auto node = newVisitor.visit(nullptr, dummy, *entry.parent);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+    	agset(node, "label", "go to \nparent");
+#pragma GCC diagnostic pop
+
+        graphWalker.Apply(newVisitor.visit(node, dummy, entry),
+                          entry, newVisitor);
+    } else {
+        graphWalker.Apply(newVisitor.visit(nullptr, dummy, entry), entry,
+                          newVisitor);
+    }
     currentGraph = newVisitor.actualGraph;
 //    graph_t* graph = nodeToGraph[nodeName].data();
 
