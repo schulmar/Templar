@@ -264,6 +264,7 @@ void MainWindow::reset() {
     entryProxyModel->setUsedSourceFileModel(usedFiles.get());
 
     debugManager->reset();
+    debugManager->selectRoot(debugManager->getEntryTarget());
 }
 
 void MainWindow::filterActionClicked()
