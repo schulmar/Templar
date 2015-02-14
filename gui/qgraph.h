@@ -70,7 +70,7 @@ signals:
     void nodeContextMenuEvent(QContextMenuEvent* event, const QString& name);
     void nodeDoubleClickEvent(QMouseEvent* event, QString name);
     void nodeClicked(QString name);
-
+    void nodeDoubleClicked(int entryId);
 
 private slots:
     void nodeClick(QNode* node);

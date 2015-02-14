@@ -55,6 +55,7 @@ private slots:
     void on_actionOpen_trace_triggered();
 
     void nodeClicked(const QString& node);
+    void nodeDoubleClicked(int);
 
     void filterActionClicked();
     void resetActionClicked();

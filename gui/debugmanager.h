@@ -37,6 +37,11 @@ public:
     TraceEntry &getEntryTarget() { return traceEntryTarget; }
     void gotoFile(size_t fileId);
     void setUsedFileModel(UsedSourceFileModel *usedSourceFiles);
+    /**
+     * @brief Get the entry with the given id
+     * @return nullptr if there is no entry with the given id
+     */
+    TraceEntry const* getEntryById(TraceEntry::Id_t id);
 public slots:
     void next();
     void prev();

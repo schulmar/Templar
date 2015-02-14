@@ -98,7 +98,8 @@ struct TraceEntry {
     SourceLocation declarationBegin;
     SourceLocation declarationEnd;
     size_t sourceFileId;
-    unsigned int id;
+    using Id_t = unsigned int;
+    Id_t id;
     int64_t memoryUsage;
     double duration;
     TraceEntry *parent;

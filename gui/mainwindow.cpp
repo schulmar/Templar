@@ -202,6 +202,9 @@ void MainWindow::makeConnections() {
 
     QObject::connect(qGraph, SIGNAL(nodeClicked(QString)), this, SLOT(nodeClicked(QString)));
 
+    QObject::connect(qGraph, SIGNAL(nodeDoubleClicked(int)), this,
+                     SLOT(nodeDoubleClicked(int)));
+
     QObject::connect(tableWidget, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(tableWidgetItemClicked(const QModelIndex &)));
 
     QObject::connect(breakpointAction, SIGNAL(triggered()), this, SLOT(breakpointActionClicked()));
@@ -287,6 +290,18 @@ void MainWindow::nodeClicked(const QString& node)
     activeNode = node;
 
     showInformation(activeNode);
+}
+
+void MainWindow::nodeDoubleClicked(int entryId) {
+	auto entry = debugManager->getEntryById(entryId);
+	if(entry) {
+		debugManager->selectRoot(*entry);
+    } else {
+        QMessageBox::warning(this, "Invalid entry id",
+                             "There is no entry with the id that you selected. "
+                             "This should not happen, please notify the "
+                             "maintainer of this program.");
+    }
 }
 
 void MainWindow::resetActionClicked()

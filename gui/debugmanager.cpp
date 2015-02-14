@@ -38,6 +38,13 @@ void DebugManager::gotoFile(size_t fileId)
         eventHandlers[i]->gotoFile((*found)->fullPath);
 }
 
+TraceEntry const* DebugManager::getEntryById(TraceEntry::Id_t id) {
+    auto result =
+        std::find_if(traceEntryTarget.begin(), traceEntryTarget.end(),
+                     [&id](const TraceEntry &child) { return child.id == id; });
+    return result == traceEntryTarget.end() ? nullptr : &*result;
+}
+
 void DebugManager::next()
 {
     if(!navigationHistory.empty() && historyPos<navigationHistory.size()-1)
@@ -49,7 +56,7 @@ void DebugManager::next()
         ++entryIterator;
         if(entryIterator!=TraceEntry::end())
         {
-            navigationHistory.push_back(entryIterator.currentEntry);
+            navigationHistory.push_back(&*entryIterator);
             historyPos = navigationHistory.size()-1;
         }
     }
@@ -66,7 +73,7 @@ void DebugManager::prev(){
     --historyPos;
     entryIterator = TraceEntry::iterator(navigationHistory[historyPos]);
     for (int i = 0; i < this->eventHandlers.size(); ++i)
-        eventHandlers[i]->handleEvent(*entryIterator.currentEntry);
+        eventHandlers[i]->handleEvent(*entryIterator);
 }
 
 void DebugManager::reset()

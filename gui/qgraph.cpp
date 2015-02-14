@@ -137,6 +137,7 @@ QGraph::mouseDoubleClickEvent(QMouseEvent* event)
 
     if (node){
         emit nodeDoubleClickEvent(event, node->getText());
+        emit nodeDoubleClicked(node->getId());
     }
 }
 
