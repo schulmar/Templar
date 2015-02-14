@@ -22,14 +22,12 @@ BinaryTraceReader::BuildReturn BinaryTraceReader::build(QString fileName) {
     QDataStream input(&file);
     input.setByteOrder(QDataStream::LittleEndian);
 
-    int counter=0;
     while (!input.atEnd()) {
         char entryHeader;
         input.readRawData(&entryHeader,1);
         if(entryHeader==1)
         {
            traceEntryPtr newEntry ( new TraceEntry{} );
-           newEntry->id = counter++;
            input.readRawData(reinterpret_cast<char*>(&newEntry->kind),4);
            qint32 length;
            input>>length;

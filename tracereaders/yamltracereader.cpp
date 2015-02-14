@@ -28,15 +28,12 @@ YAMLTraceReader::BuildReturn YAMLTraceReader::build(QString fileName) {
     auto document = YAML::LoadFile(fileName.toStdString());
     SourceFileIdAccumulator sourceFilesAccumulator(getDirPath());
 
-    int counter = 0;
-
     try {
         for (auto const &node : document) {
             if (node.Type() != YAML::NodeType::Map)
                 throw std::invalid_argument("Unexpected format of node");
             if (node["IsBegin"].as<bool>()) {
                 traceEntryPtr newEntry(new TraceEntry{});
-                newEntry->id = counter++;
                 newEntry->context = node["Name"].as<std::string>().c_str();
                 SourceFileLocation location{
                     node["FileName"].as<std::string>().c_str(),
