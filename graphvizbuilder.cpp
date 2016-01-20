@@ -51,11 +51,10 @@ void GraphvizBuilder::initGraph()
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wwrite-strings"
     Agraph_t *graphPtr = agopen("Templight", Agstrictdirected, &AgDefaultDisc);
-    agattr(graphPtr, AGNODE, "shape", Q_TO_C_STRING(common::attrs::POLYSHAPE));
-    agattr(graphPtr, AGNODE, "shape", Q_TO_C_STRING(common::attrs::POLYSHAPE));
-    agattr(graphPtr, AGNODE, "sides", Q_TO_C_STRING(common::attrs::SIDES));
-    agattr(graphPtr, AGNODE, "fillcolor", Q_TO_C_STRING(common::colors::DEFAULT));
-    agattr(graphPtr, AGNODE, "style", Q_TO_C_STRING(common::attrs::STYLE));
+    agattr(graphPtr, AGNODE, "shape", const_cast<char*>(common::attrs::POLYSHAPE));
+    agattr(graphPtr, AGNODE, "sides", const_cast<char*>(common::attrs::SIDES));
+    agattr(graphPtr, AGNODE, "fillcolor", const_cast<char*>(common::colors::DEFAULT));
+    agattr(graphPtr, AGNODE, "style", const_cast<char*>(common::attrs::STYLE));
     agattr(graphPtr, AGNODE, "instantiationpos", "");
 #pragma GCC diagnostic pop
     actualGraph = QSharedPointer<graph_t> (graphPtr, agclose);
@@ -82,13 +81,13 @@ void GraphvizBuilder::templateBegin(const TraceEntry& entry)
                           const_cast<char*>(idStr.c_str()),
                           TRUE);
 
-    char* label = Q_TO_C_STRING(breakString(entry.context));
+    char* label = breakString(entry.context).toUtf8().data();
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wwrite-strings"
     agset(node, "label", label);
 
     if (entry.kind == "Memoization") {
-        agset(node, "shape", Q_TO_C_STRING(common::attrs::ELLIPSESHAPE));
+        agset(node, "shape", const_cast<char*>(common::attrs::ELLIPSESHAPE));
     }
 
     // set parent

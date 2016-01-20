@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     builder.cpp \
     entryinfohandler.cpp \
     stringlistdialog.cpp \
-    qgraph.cpp
+    qgraph.cpp \
+    common.cpp
 
 HEADERS  += mainwindow.h \
     tracereader.h \
