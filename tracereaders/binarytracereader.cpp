@@ -1,6 +1,7 @@
 #include "binarytracereader.h"
 #include <QFile>
 #include "make_unique.hpp"
+#include <QDataStream>
 
 namespace Templar {
 
