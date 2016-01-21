@@ -1,6 +1,7 @@
 #include "usedsourcefilemodel.h"
 #include <QFile>
 #include <QDir>
+#include <QFileInfo>
 
 namespace Templar
 {
@@ -38,6 +39,31 @@ void UsedSourceFileModel::Add(const QString &path, size_t fileId) {
     nodeIdMap.insert(fileId, currentNode);
     currentNode->id = fileId;
     currentNode->fullPath = path;
+}
+
+QString UsedSourceFileModel::getAbsolutePathOf(size_t fileId) {
+  auto iter = nodeIdMap.find(fileId);
+  if (iter == nodeIdMap.end()) {
+    throw std::runtime_error(
+        tr("Could not find file with id %0").arg(fileId).toStdString());
+  } else {
+    return QDir(relativePathRoot).filePath(iter.value()->fullPath);
+  }
+}
+
+bool UsedSourceFileModel::checkRelativePathRoot(QString *failingRelativePath) {
+  for (auto const &nodeIdPath : nodeIdMap) {
+    if (QDir::isRelativePath(nodeIdPath->fullPath)) {
+      QFileInfo fileInfo{QDir(relativePathRoot).filePath(nodeIdPath->fullPath)};
+      if (!(fileInfo.exists() && fileInfo.isReadable())) {
+        if (failingRelativePath) {
+          *failingRelativePath = nodeIdPath->fullPath;
+        }
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 QModelIndex UsedSourceFileModel::index(int row, int column, const QModelIndex &parent) const

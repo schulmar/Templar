@@ -39,6 +39,14 @@ public:
     explicit UsedSourceFileModel(const std::vector<QString> &fileNames);
     void Add(const QString &newPath, size_t fileId);
 
+    QString getAbsolutePathOf(size_t fileId);
+
+    /**
+     * @brief Check if the files with relative paths are found when using the
+     * paths relative to relativePathRoot
+     */
+    bool checkRelativePathRoot(QString *failingRelativePath);
+
     QModelIndex index(int row, int column, const QModelIndex &parent) const;
     QModelIndex parent(const QModelIndex &index) const;
     int rowCount(const QModelIndex &parent) const;
@@ -50,7 +58,7 @@ public:
 
     SourceFileNode root;
     UsedFileMap nodeIdMap;
-
+    QString relativePathRoot = ".";
 };
 }
 #endif // USEDSOURCEFILEMODEL_H

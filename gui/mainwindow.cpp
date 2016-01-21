@@ -258,6 +258,30 @@ void MainWindow::reset() {
 
     debugManager->getEntryTarget().clear();
     usedFiles = TraceReader::build(currentFileName, debugManager->getEntryTarget(), dirPath);
+    QString failingRelativePath;
+    while (!usedFiles->checkRelativePathRoot(&failingRelativePath)) {
+      auto result = QMessageBox::question(
+          this, tr("Source files not found"),
+          tr("The source file %0 doesn't seem to lie at %1, do "
+             "you want to set another path?")
+              .arg(failingRelativePath)
+              .arg(usedFiles->relativePathRoot),
+          QMessageBox::StandardButton::Yes | QMessageBox::StandardButton::No,
+          QMessageBox::StandardButton::Yes);
+      if(result ==  QMessageBox::StandardButton::No) {
+    	  break;
+      } else {
+        auto root = QFileDialog::getExistingDirectory(
+            this,
+            tr("Select root for relative path %0").arg(failingRelativePath),
+            usedFiles->relativePathRoot);
+        if (root.isEmpty()) {
+          break;
+        } else {
+          usedFiles->relativePathRoot = root;
+        }
+      }
+    }
     QObject::connect(
         usedFiles.get(), SIGNAL(dataChanged(QModelIndex, QModelIndex)),
         entryProxyModel,

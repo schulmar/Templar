@@ -81,24 +81,25 @@ void EditorHandler::gotoFile(const QString &filename)
     editor->setPlainText(src);
     editor->setDocumentTitle(filename);
 }
-void EditorHandler::highlightPos(const TraceEntry& entry, const QColor& color) {
-    if (usedFileModel) {
-        UsedFileMap::iterator found =
-            usedFileModel->nodeIdMap.find(entry.instantiation.fileId);
-        if (found != usedFileModel->nodeIdMap.end()) {
-            QFile file((*found)->fullPath);
-
-            file.open(QIODevice::ReadOnly);
-
-            QString src(file.readAll());
-
-            editor->setPlainText(src);
-            editor->setDocumentTitle((*found)->fullPath);
-            editor->highlightRange(entry.instantiationBegin,
-                                   entry.instantiationEnd, color);
-        }
+void EditorHandler::highlightPos(const TraceEntry &entry, const QColor &color) {
+  if (usedFileModel) {
+    QString path;
+    try {
+      path = usedFileModel->getAbsolutePathOf(entry.instantiation.fileId);
+    } catch (...) {
+      return;
     }
-}
+    QFile file(path);
 
+    file.open(QIODevice::ReadOnly);
+
+    QString src(file.readAll());
+
+    editor->setPlainText(src);
+    editor->setDocumentTitle(path);
+    editor->highlightRange(entry.instantiationBegin, entry.instantiationEnd,
+                           color);
+  }
+}
 
 } // namespace Templar

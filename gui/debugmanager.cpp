@@ -30,12 +30,15 @@ void DebugManager::gotoFile(size_t fileId)
 {
     if(usedFiles==nullptr)
         return;
-    QMap<size_t, SourceFileNode*>::iterator found = usedFiles->nodeIdMap.find(fileId);
-    if(found==usedFiles->nodeIdMap.end())
-        return;
+    QString path;
+    try {
+    	path = usedFiles->getAbsolutePathOf(fileId);
+    } catch (...) {
+    	return;
+    }
 
     for(int i=0;i<this->eventHandlers.size();++i)
-        eventHandlers[i]->gotoFile((*found)->fullPath);
+        eventHandlers[i]->gotoFile(path);
 }
 
 TraceEntry const* DebugManager::getEntryById(TraceEntry::Id_t id) {
