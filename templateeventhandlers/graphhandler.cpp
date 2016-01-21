@@ -65,7 +65,7 @@ void GraphHandler::changeGraph(const TraceEntry &entry)
 {
     currentRootIterator = TraceEntry::iterator(&entry);
     GraphvizVisitor newVisitor(gvc);
-    FullTreeWalker<GraphvizVisitor> graphWalker;
+    RestrictedDepthTreeWalker<GraphvizVisitor> graphWalker{3};
     TraceEntry dummy;
     if (entry.parent) {
     	auto node = newVisitor.visit(nullptr, dummy, *entry.parent);
@@ -78,8 +78,8 @@ void GraphHandler::changeGraph(const TraceEntry &entry)
         graphWalker.Apply(newVisitor.visit(node, dummy, entry),
                           entry, newVisitor);
     } else {
-        graphWalker.Apply(newVisitor.visit(nullptr, dummy, entry), entry,
-                          newVisitor);
+    	graphWalker.maximalDepth = 1;
+        graphWalker.Apply(nullptr, entry, newVisitor);
     }
     currentGraph = newVisitor.actualGraph;
 //    graph_t* graph = nodeToGraph[nodeName].data();

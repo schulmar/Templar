@@ -148,6 +148,26 @@ struct FullTreeWalker
         return node_data();
     }
 };
+
+template <typename EntryWalker> struct RestrictedDepthTreeWalker {
+  int maximalDepth;
+
+  RestrictedDepthTreeWalker(int depth) : maximalDepth{depth} {}
+
+  typedef typename EntryWalker::node_data node_data;
+  node_data Apply(node_data parent_data, const TraceEntry &root,
+                  EntryWalker &walker, int currentDepth = 0) {
+    if (currentDepth < maximalDepth) {
+      for (int i = 0; i < static_cast<int>(root.children.size()); ++i) {
+        Apply(walker.visit(parent_data, root, *root.children.at(i)),
+              *root.children.at(i), walker, currentDepth + 1);
+      }
+    }
+    // todo: why not void? the return value is never used
+    return node_data();
+  }
+};
+
 /*
 template <typename EntryWalker>
 struct FilteringTreeWalker
