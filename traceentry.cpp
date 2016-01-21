@@ -51,4 +51,8 @@ void TraceEntry::iterator::increment()
     }
 }
 
+Templar::TraceEntry::iterator TraceEntry::end() { return iterator(); }
+
+Templar::TraceEntry::iterator TraceEntry::begin() { return iterator(this); }
+
 }

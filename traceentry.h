@@ -109,29 +109,31 @@ struct TraceEntry {
     	return endTimeStamp - beginTimeStamp;
     }
 
-    struct iterator : boost::iterator_facade<iterator, TraceEntry const,
-                                             std::forward_iterator_tag> {
-        iterator(TraceEntry const *first=nullptr);
-    private:
-        friend class boost::iterator_core_access;
-
-        bool equal(const iterator &other) const {
-        	return other.currentEntry == currentEntry;
-        }
-
-        void increment();
-        reference dereference() const {
-        	return *currentEntry;
-        }
-
-        TraceEntry const *moveToNextSibling(TraceEntry const *entry) const;
-
-        TraceEntry const *currentEntry;
-        TraceEntry const *root;
-    };
-    static iterator end() { return iterator(); }
-    iterator begin() { return iterator(this); }
+    struct iterator;
+    static iterator end();
+    iterator begin();
     void clear() { children.clear(); }
+};
+
+struct TraceEntry::iterator : boost::iterator_facade<iterator, TraceEntry const&,
+                                         std::forward_iterator_tag> {
+    iterator(TraceEntry const *first=nullptr);
+private:
+    friend class boost::iterator_core_access;
+
+    bool equal(const iterator &other) const {
+    	return other.currentEntry == currentEntry;
+    }
+
+    void increment();
+    reference dereference() const {
+    	return *currentEntry;
+    }
+
+    TraceEntry const *moveToNextSibling(TraceEntry const *entry) const;
+
+    TraceEntry const *currentEntry;
+    TraceEntry const *root;
 };
 
 template <typename EntryWalker>
