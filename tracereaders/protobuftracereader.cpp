@@ -99,13 +99,14 @@ void ProtobufTraceReader::begin(TemplightEntry_Begin const &begin,
     entry->instantiationEnd = entry->instantiation;
     entry->declarationBegin = entry->instantiation;
     entry->declarationEnd = entry->instantiation;
-    entry->duration = begin.time_stamp();
+    entry->beginTimeStamp = begin.time_stamp();
     entry->memoryUsage = begin.memory_usage();
     beginEntry(entry);
 }
 
-void ProtobufTraceReader::end(TemplightEntry_End const &/*end*/) {
-    /*auto &entry = */endEntry();
+void ProtobufTraceReader::end(TemplightEntry_End const &end) {
+    auto &entry = endEntry();
+    entry.endTimeStamp = end.time_stamp();
 }
 
 } // namespace Templar

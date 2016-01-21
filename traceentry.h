@@ -89,7 +89,7 @@ struct TraceEntry {
     TraceEntry()
     : kind(Unknown), instantiation(), instantiationBegin(), instantiationEnd(),
       declarationBegin(), declarationEnd(), sourceFileId(0), id(-1), 
-      memoryUsage(0), duration(0), parent(nullptr) {}
+      memoryUsage(0), beginTimeStamp(0), endTimeStamp(0), parent(nullptr) {}
 
     QString context;
     SourceLocation instantiation;
@@ -101,9 +101,13 @@ struct TraceEntry {
     using Id_t = unsigned int;
     Id_t id;
     int64_t memoryUsage;
-    double duration;
+    double beginTimeStamp, endTimeStamp;
     TraceEntry *parent;
     QVector<traceEntryPtr> children;
+
+    double getDuration() const {
+    	return endTimeStamp - beginTimeStamp;
+    }
 
     struct iterator : boost::iterator_facade<iterator, TraceEntry const,
                                              std::forward_iterator_tag> {

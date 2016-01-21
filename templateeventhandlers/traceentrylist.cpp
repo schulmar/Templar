@@ -101,7 +101,7 @@ QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
             return QString::number(element->children.size());
         case 4:
             // output in microseconds
-            return QString::number(1e6 * element->duration);
+            return QString::number(1e6 * element->getDuration());
         }
     }
         break;
