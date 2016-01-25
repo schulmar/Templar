@@ -35,6 +35,7 @@ public:
         this->breakpoints = breakpoints;
     }
     TraceEntry &getEntryTarget() { return traceEntryTarget; }
+    const TraceEntry *getCurrentEntry();
     void gotoFile(size_t fileId);
     void setUsedFileModel(UsedSourceFileModel *usedSourceFiles);
     /**
@@ -48,12 +49,12 @@ public slots:
     void forward();
     void rewind();
     void reset();
+    void selectParentRoot();
 
 private:
     bool hasBreakpoint(const QString& str) const;
 
-private:
-
+  private:
     QList<TemplateEventHandler*> eventHandlers;
     std::vector<const TraceEntry *> navigationHistory;
     std::vector<const TraceEntry *> rootHistory;

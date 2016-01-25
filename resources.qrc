@@ -8,5 +8,6 @@
         <file alias="prev">icons/prev.png</file>
         <file alias="rewind">icons/rewind.png</file>
         <file alias="stop">icons/stop.png</file>
+        <file alias="up">icons/up.png</file>
     </qresource>
 </RCC>

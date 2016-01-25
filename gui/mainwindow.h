@@ -66,6 +66,7 @@ private slots:
     void fileWidgetItemClicked(const QModelIndex &index);
 
     void on_actionNode_Colors_triggered();
+    void upActionClicked();
 
 private:
     void init();
@@ -86,6 +87,7 @@ private:
 
     QAction* nextAction;
     QAction* prevAction;
+    QAction* upAction;
 
     QAction* forwardAction;
     QAction* rewindAction;

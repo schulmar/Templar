@@ -26,6 +26,10 @@ void DebugManager::setUsedFileModel(UsedSourceFileModel *usedSourceFiles)
     }
 }
 
+const TraceEntry *DebugManager::getCurrentEntry() {
+  return entryIterator != TraceEntry::iterator{} ? &*entryIterator : nullptr;
+}
+
 void DebugManager::gotoFile(size_t fileId)
 {
     if(usedFiles==nullptr)
@@ -89,6 +93,12 @@ void DebugManager::reset()
         eventHandlers[i]->reset(traceEntryTarget);
      //   eventHandlers[i]->handleEvent(traceEntryTarget);
     }
+}
+
+void DebugManager::selectParentRoot() {
+  if (entryIterator->parent) {
+    selectRoot(*entryIterator->parent);
+  }
 }
 
 int DebugManager::getEventCount() const

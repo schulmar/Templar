@@ -147,6 +147,9 @@ void MainWindow::initGui() {
     qGraph->follow(followAction->isChecked());
     ui->mainToolBar->addAction(followAction);
 
+    upAction = createAction("&Up", "F7", "Up", this, ":/icons/up");
+    ui->mainToolBar->addAction(upAction);
+
     // separator
     ui->mainToolBar->addSeparator();
 
@@ -199,6 +202,8 @@ void MainWindow::makeConnections() {
     QObject::connect(filterAction, SIGNAL(triggered()), this, SLOT(filterActionClicked()));
 
     QObject::connect(resetAction, SIGNAL(triggered()), this, SLOT(resetActionClicked()));
+
+    QObject::connect(upAction, SIGNAL(triggered()), this, SLOT(upActionClicked()));
 
     QObject::connect(qGraph, SIGNAL(nodeClicked(QString)), this, SLOT(nodeClicked(QString)));
 
@@ -517,4 +522,12 @@ void MainWindow::on_actionNode_Colors_triggered()
 {
     ColorPreferencesDialog dlg(this);
     dlg.exec();
+}
+
+void MainWindow::upActionClicked() {
+	debugManager->selectParentRoot();
+	auto entry = debugManager->getCurrentEntry();
+	if(entry) {
+		qGraph->selectEntry(entry->id);
+	}
 }

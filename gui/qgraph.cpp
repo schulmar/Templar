@@ -538,6 +538,15 @@ QGraph::nodeClick(QNode *node)
     emit nodeClicked(node->getText());
 }
 
+void
+QGraph::selectEntry(const int nodeId)
+{
+	QNode *node = getNodeById(nodeId);
+	if(node) {
+		nodeClick(node);
+	}
+}
+
 
 QNode::QNode(const QPainterPath& path, const QPicture& picture, const int id_, const QString &text_, node_t *node_, int kind_)
     : QGraphicsPathItem(path),

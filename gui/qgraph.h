@@ -63,6 +63,7 @@ public slots:
     void colorNode(const int &nodeId, const QColor &color);
     void colorAllNode(const QColor& color);
     bool follow(bool on);
+    void selectEntry(const int nodeId);
 
 signals:
 
