@@ -53,6 +53,7 @@ public slots:
 
 private:
     bool hasBreakpoint(const QString& str) const;
+    void letHandlersHandleEvent(TraceEntry const &entry);
 
   private:
     QList<TemplateEventHandler*> eventHandlers;

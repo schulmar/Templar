@@ -69,18 +69,21 @@ void DebugManager::next()
     }
     if(navigationHistory.empty() || navigationHistory[historyPos] == nullptr)
         return; // if history still empty, exit this function.
-    for (int i = 0; i < this->eventHandlers.size(); ++i)
-        eventHandlers[i]->handleEvent(*navigationHistory[historyPos]);
+    letHandlersHandleEvent(*navigationHistory[historyPos]);
 }
 
-void DebugManager::prev(){
+void DebugManager::letHandlersHandleEvent(TraceEntry const &entry) {
+  for (int i = 0; i < this->eventHandlers.size(); ++i)
+    eventHandlers[i]->handleEvent(entry);
+}
+
+void DebugManager::prev() {
     if (historyPos == 0)
         return;
 
     --historyPos;
     entryIterator = TraceEntry::iterator(navigationHistory[historyPos]);
-    for (int i = 0; i < this->eventHandlers.size(); ++i)
-        eventHandlers[i]->handleEvent(*entryIterator);
+    letHandlersHandleEvent(*entryIterator);
 }
 
 void DebugManager::reset()
