@@ -164,6 +164,7 @@ set( TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS}
 )
 set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES}
   "main.cpp"
+  "common.cpp"
   "traceentry.cpp"
   "usedsourcefilemodel.cpp"
   "settingsnames.cpp"

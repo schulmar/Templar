@@ -487,7 +487,10 @@ void QGraph::colorNode(QNode *node, const QColor &color)
     node->setBrush(brush);
     node->update();
 
-    agset(node->getNode(), "fillcolor", Q_TO_C_STRING(color.name()));
+    agset(node->getNode(), "fillcolor", color.name().toUtf8().data());
+
+    if(mFollow)
+        centerOn(node);
 }
 
 /*QColor
