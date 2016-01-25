@@ -1,8 +1,13 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 
 project(Templar)
 
 option(DONT_USE_QT5 "Disables Qt5 even if present on the system" OFF)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON) 
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTORCC ON)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
@@ -39,9 +44,10 @@ else()
 endif()
 message(STATUS "Configured compiler options for ${CMAKE_SYSTEM_NAME} system with ${CMAKE_CXX_COMPILER_ID} toolset.")
 
-
-find_package(Qt5Widgets)
-if(NOT Qt5Widgets_FOUND OR DONT_USE_QT5)
+if(NOT DONT_USE_QT5)
+	find_package(Qt5Widgets)
+endif()
+if(NOT Qt5Widgets_FOUND)
     if(DONT_USE_QT5)
         message("Ignoring Qt5 and using Qt4 instead as requested.")
     else()
@@ -192,17 +198,7 @@ set(TEMPLAR_RESOURCES
   "resources.qrc"
 )
 
-if(USING_QT5)
-  QT5_WRAP_CPP( TEMPLAR_MOC_SRCS ${TEMPLAR_MOC_HDRS} )# OPTIONS "-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
-  QT5_WRAP_UI( TEMPLAR_UI_HDRS ${TEMPLAR_UIS} )
-  QT5_ADD_RESOURCES( TEMPLAR_RESOURCES_RCC ${TEMPLAR_RESOURCES} )
-else()
-  QT4_WRAP_UI( TEMPLAR_UI_HDRS ${TEMPLAR_UIS} )
-  QT4_WRAP_CPP( TEMPLAR_MOC_SRCS ${TEMPLAR_MOC_HDRS} )# OPTIONS "-DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
-  QT4_ADD_RESOURCES( TEMPLAR_RESOURCES_RCC ${TEMPLAR_RESOURCES} )
-endif()
-
-add_executable(Templar ${TEMPLAR_SOURCES} ${TEMPLAR_MOC_SRCS} ${TEMPLAR_UI_HDRS} ${TEMPLAR_RESOURCES_RCC})
+add_executable(Templar ${TEMPLAR_SOURCES} ${TEMPLAR_RESOURCES})
 target_link_libraries(Templar ${QT_LIBRARIES} ${EXTRA_LIBS})
 
 
