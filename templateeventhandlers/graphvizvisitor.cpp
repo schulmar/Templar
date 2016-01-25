@@ -3,24 +3,13 @@
 #include "qt_version_switch.h"
 #include <QString>
 #include <sstream>
+#include <helper/breakstring.hpp>
 
 namespace Templar{
 
 namespace {
 
-QString breakString(const QString& str)
-{
-    const int lineLength = 128;
-    int i = 0;
-    QString ret = str;
-
-    while ( (i += lineLength) < str.length() )
-    {
-        ret.insert(i, '\n');
-    }
-
-    return ret;
-}
+using Helper::breakString;
 
 template <typename To, typename From>
 To lexical_cast(From from)

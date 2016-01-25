@@ -169,6 +169,8 @@ set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES}
   "settingsnames.cpp"
   "traceentrylistfilterproxy.cpp"
   
+  "helper/breakstring.cpp"
+  
   "gui/debugmanager.cpp"
   "gui/highlighter.cpp"
   "gui/entryinfo.cpp"

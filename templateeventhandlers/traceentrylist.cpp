@@ -2,6 +2,7 @@
 #include "usedsourcefilemodel.h"
 #include <QBrush>
 #include <QColor>
+#include <helper/breakstring.hpp>
 
 namespace Templar {
 
@@ -112,8 +113,9 @@ QVariant EntryListModelAdapter::data(const QModelIndex &index, int role) const
             instantiationKindName =
                 TraceEntry::InstantiationKindNames.at(element->kind);
         } catch (std::out_of_range const&) {}
-        return QString("%0 (%1)").arg(element->context).arg(
-            instantiationKindName);
+        return QString("%1: %0")
+            .arg(Helper::breakString(element->context))
+            .arg(instantiationKindName);
     }
     case Qt::BackgroundRole:
         return QBrush(backgrounds[element->kind]);
