@@ -171,6 +171,9 @@ void MainWindow::initGui() {
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addWidget(new EntryFilterSettings(this));
 
+    numberOfInstantiationsLabel = new QLabel(this);
+    ui->statusBar->addPermanentWidget(numberOfInstantiationsLabel);
+
     listDialog = new StringListDialog("Regexp", this);
 }
 
@@ -424,13 +427,46 @@ void MainWindow::openTrace(const QString &fileName)
     QSettings().setValue(Templar::Settings::Names::last_opened_trace_file,
                          fileName);
     showInformation();
+    showGlobalStatistics();
 }
 
 void MainWindow::showInformation(QString info)
 {
-    statusBar()->showMessage(tr("Number of trace events: ")
-                             + QString::number(debugManager->getEventCount())
-                             + " | " + info);
+    statusBar()->showMessage(info);
+}
+
+void MainWindow::showGlobalStatistics() {
+	struct InstantiationCountVisitor{
+		using node_data = void*;
+
+		void *visit(void *, Templar::TraceEntry const & /*root*/,
+					Templar::TraceEntry const &child) {
+		  assert(child.kind <
+				 Templar::TraceEntry::NumberOfInstantiationKinds);
+		  ++counts[child.kind];
+		  return nullptr;
+		}
+
+		std::array<std::size_t,
+				   Templar::TraceEntry::NumberOfInstantiationKinds>
+			counts = {{0}};
+	};
+	Templar::FullTreeWalker<InstantiationCountVisitor> walker;
+	InstantiationCountVisitor visitor;
+	walker.Apply(nullptr, debugManager->getEntryTarget(), visitor);
+	auto sum = std::accumulate(std::begin(visitor.counts),
+							   std::end(visitor.counts), 0);
+	numberOfInstantiationsLabel->setText(tr("# of events: %0").arg(sum));
+	QString tooltip = tr("<table>", "instantiation count tooltip header");
+	for(std::size_t index = 0; index < visitor.counts.size(); ++index) {
+	  tooltip += tr("<tr><td align=right>%0</td><td>%1s</td>\n",
+					Templar::TraceEntry::InstantiationKindNames[index],
+					visitor.counts[index])
+					 .arg(visitor.counts[index])
+					 .arg(Templar::TraceEntry::InstantiationKindNames[index]);
+	}
+	tooltip += tr("</table>", "instantiation count tooltip footer");
+	numberOfInstantiationsLabel->setToolTip(tooltip);
 }
 
 void MainWindow::on_actionExit_triggered()
@@ -515,7 +551,7 @@ void MainWindow::exportToPNG(QImage *image, QGraphicsScene* scene, const QString
 
     image->save(fileName,"PNG");
 
-    showInformation("graph exported to png");
+    showInformation(tr("graph exported to png"));
 }
 
 void MainWindow::on_actionNode_Colors_triggered()

@@ -80,8 +80,8 @@ struct TraceEntry {
       /// instantiated.
       Memoization,
       // END TEMPLIGHT
-      Unknown
-
+      Unknown,
+	  NumberOfInstantiationKinds,
     } kind;
 
     static const std::vector<const char *> InstantiationKindNames;

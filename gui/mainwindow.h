@@ -7,6 +7,7 @@
 #include <QPointer>
 #include <QMap>
 #include <QRegExp>
+#include <QLabel>
 
 #include <graphviz/gvc.h>
 
@@ -79,6 +80,7 @@ private:
     QAction* createAction(const char* name, const char* shortcut, const char* statusTip, QWidget* parent=0);
 
     void showInformation(QString info = "");
+    void showGlobalStatistics();
     void setLayout(QString layout);
     void exportToPNG(QImage*, QGraphicsScene*, const QString&);
     void openTrace(const QString &fileName);
@@ -98,6 +100,8 @@ private:
 
     QAction* filterAction;
     QAction* resetAction;
+
+    QLabel* numberOfInstantiationsLabel;
 
     Templar::DebugManager *debugManager;
     QString currentLayout;
