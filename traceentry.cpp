@@ -51,6 +51,16 @@ void TraceEntry::iterator::increment()
     }
 }
 
+TraceEntry::Duration TraceEntry::getChildDurations() const {
+  TraceEntry::Duration summedChildDurations{0};
+  if (!children.empty()) {
+    for (auto const &child : children) {
+      summedChildDurations += child->getDuration();
+    }
+  }
+  return summedChildDurations;
+}
+
 Templar::TraceEntry::iterator TraceEntry::end() { return iterator(); }
 
 Templar::TraceEntry::iterator TraceEntry::begin() { return iterator(this); }

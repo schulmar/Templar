@@ -175,7 +175,6 @@ void MainWindow::initGui() {
     ui->statusBar->addPermanentWidget(numberOfInstantiationsLabel);
 
     instantiationTimeLabel = new QLabel(this);
-    instantiationTimeLabel->setToolTip(tr("Total template compilation time"));
     ui->statusBar->addPermanentWidget(instantiationTimeLabel);
 
     listDialog = new StringListDialog("Regexp", this);
@@ -460,10 +459,10 @@ void MainWindow::showGlobalStatistics() {
 	walker.Apply(nullptr, debugManager->getEntryTarget(), visitor);
 	auto sum = std::accumulate(std::begin(visitor.counts),
 							   std::end(visitor.counts), 0);
-	numberOfInstantiationsLabel->setText(tr("# of events: %0").arg(sum));
+	numberOfInstantiationsLabel->setText(tr("%0 events").arg(sum));
 	QString tooltip = tr("<table>", "instantiation count tooltip header");
 	for(std::size_t index = 0; index < visitor.counts.size(); ++index) {
-	  tooltip += tr("<tr><td align=right>%0</td><td>%1s</td>\n",
+	  tooltip += tr("<tr><td align=right>%0</td><td>%1(s)</td>\n",
 					Templar::TraceEntry::InstantiationKindNames[index],
 					visitor.counts[index])
 					 .arg(visitor.counts[index])
@@ -472,11 +471,22 @@ void MainWindow::showGlobalStatistics() {
 	tooltip += tr("</table>", "instantiation count tooltip footer");
 	numberOfInstantiationsLabel->setToolTip(tooltip);
 	using FloatingPointSeconds = std::chrono::duration<double>;
-	instantiationTimeLabel->setText(tr("t=%0 s").arg(
-		QString::number(std::chrono::duration_cast<FloatingPointSeconds>(
-							debugManager->getEntryTarget().getDuration())
-							.count(),
-						'g', 3)));
+	instantiationTimeLabel->setText(
+		tr("in %0 s")
+			.arg(QString::number(
+				std::chrono::duration_cast<FloatingPointSeconds>(
+					debugManager->getEntryTarget().getChildDurations())
+					.count(),
+				'g', 3)));
+	instantiationTimeLabel->setToolTip(
+		tr("Total template compilation time (summed durations of top level "
+		   "entries)\n\nThe time from the begin of the first to the end of the "
+		   "last template instantiation was %0 seconds")
+			.arg(QString::number(
+				std::chrono::duration_cast<FloatingPointSeconds>(
+					debugManager->getEntryTarget().getDuration())
+					.count(),
+				'g', 3)));
 }
 
 void MainWindow::on_actionExit_triggered()

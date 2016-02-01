@@ -111,6 +111,8 @@ struct TraceEntry {
     	return endTimeStamp - beginTimeStamp;
     }
 
+    Duration getChildDurations() const;
+
     struct iterator;
     static iterator end();
     iterator begin();
