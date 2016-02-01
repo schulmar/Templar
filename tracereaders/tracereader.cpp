@@ -34,6 +34,14 @@ TraceReader::BuildReturn TraceReader::build(QString fileName, TraceEntry &entry,
             std::to_string(reader->childVectorStack.size() - 1) +
             " open entries remaining");
     }
+    if(!entry.children.empty()) {
+    	entry.beginTimeStamp = entry.children.front()->beginTimeStamp;
+    	entry.endTimeStamp = entry.children.front()->endTimeStamp;
+    	for(auto const& child: entry.children) {
+    		entry.beginTimeStamp = std::min(entry.beginTimeStamp, child->beginTimeStamp);
+    		entry.endTimeStamp = std::max(entry.endTimeStamp, child->endTimeStamp);
+    	}
+	}
     return result;
 }
 

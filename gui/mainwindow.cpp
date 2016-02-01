@@ -174,6 +174,10 @@ void MainWindow::initGui() {
     numberOfInstantiationsLabel = new QLabel(this);
     ui->statusBar->addPermanentWidget(numberOfInstantiationsLabel);
 
+    instantiationTimeLabel = new QLabel(this);
+    instantiationTimeLabel->setToolTip(tr("Total template compilation time"));
+    ui->statusBar->addPermanentWidget(instantiationTimeLabel);
+
     listDialog = new StringListDialog("Regexp", this);
 }
 
@@ -467,6 +471,12 @@ void MainWindow::showGlobalStatistics() {
 	}
 	tooltip += tr("</table>", "instantiation count tooltip footer");
 	numberOfInstantiationsLabel->setToolTip(tooltip);
+	using FloatingPointSeconds = std::chrono::duration<double>;
+	instantiationTimeLabel->setText(tr("t=%0 s").arg(
+		QString::number(std::chrono::duration_cast<FloatingPointSeconds>(
+							debugManager->getEntryTarget().getDuration())
+							.count(),
+						'g', 3)));
 }
 
 void MainWindow::on_actionExit_triggered()

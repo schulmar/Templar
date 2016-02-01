@@ -102,6 +102,7 @@ private:
     QAction* resetAction;
 
     QLabel* numberOfInstantiationsLabel;
+    QLabel* instantiationTimeLabel;
 
     Templar::DebugManager *debugManager;
     QString currentLayout;
