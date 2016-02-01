@@ -100,4 +100,10 @@ TraceEntry & TraceReader::endEntry() {
   return lastEntry;
 }
 
+TraceEntry::Duration TraceReader::durationFrom(double d) {
+  return TraceEntry::Duration{static_cast<TraceEntry::Duration::rep>(
+      d * std::chrono::duration_cast<TraceEntry::Duration>(
+              std::chrono::seconds{1}).count())};
+}
+
 } // namespace Templar

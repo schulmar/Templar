@@ -122,7 +122,7 @@ OldXMLTraceReader::BuildReturn OldXMLTraceReader::build(QString fileName) {
                     } else if (xml.name().toString() == TimeStamp &&
                                xml.isStartElement()) {
                         // store start for later difference calculation
-                        newEntry->beginTimeStamp = attributeAsDouble(xml, "time");
+                        newEntry->beginTimeStamp = durationFrom(attributeAsDouble(xml, "time"));
                     }
                 } while (xml.name().toString() != entryType);
 
@@ -137,7 +137,7 @@ OldXMLTraceReader::BuildReturn OldXMLTraceReader::build(QString fileName) {
                             attributeAsLongLong(xml, "bytes");
                     } else if (xml.name().toString() == TimeStamp &&
                                xml.isStartElement()) {
-                        lastEntry.endTimeStamp = attributeAsDouble(xml, "time");
+                        lastEntry.endTimeStamp = durationFrom(attributeAsDouble(xml, "time"));
                     }
                 } while (xml.name().toString() != entryType);
             }

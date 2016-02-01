@@ -40,6 +40,8 @@ public:
 
     TraceEntry &endEntry();
 
+    TraceEntry::Duration durationFrom(double);
+
 private:
     std::stack<TraceEntry*> childVectorStack;
 

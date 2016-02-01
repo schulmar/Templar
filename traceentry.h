@@ -7,6 +7,7 @@
 #include <QMap>
 #include <QMetaType>
 #include <boost/iterator/iterator_facade.hpp>
+#include <chrono>
 
 namespace Templar{
 
@@ -101,11 +102,12 @@ struct TraceEntry {
     using Id_t = unsigned int;
     Id_t id;
     int64_t memoryUsage;
-    double beginTimeStamp, endTimeStamp;
+    using Duration = std::chrono::nanoseconds;
+    Duration beginTimeStamp, endTimeStamp;
     TraceEntry *parent;
     QVector<traceEntryPtr> children;
 
-    double getDuration() const {
+    Duration getDuration() const {
     	return endTimeStamp - beginTimeStamp;
     }
 
