@@ -2,11 +2,7 @@
 #define PROTOBUFTRACEREADER_H_
 
 #include "tracereader.h"
-
-// forward-declare the protoc-generated classes:
-class TemplightTrace;
-class TemplightEntry_Begin;
-class TemplightEntry_End;
+#include "templight-tools/include/templight/ProtobufReader.h"
 
 namespace Templar {
 
@@ -16,10 +12,8 @@ struct ProtobufTraceReader : TraceReader {
     BuildReturn build(QString fileName) override;
 
   private:
-    void buildFromTrace(TemplightTrace const &trace,
-                        UsedSourceFileModel &model);
-    void begin(TemplightEntry_Begin const &, TemplightTrace const &, UsedSourceFileModel &);
-    void end(TemplightEntry_End const &);
+    void begin(::templight::PrintableEntryBegin, UsedSourceFileModel&);
+    void end(::templight::PrintableEntryEnd);
 };
 
 } // namespace Templar

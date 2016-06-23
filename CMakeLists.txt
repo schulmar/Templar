@@ -102,26 +102,6 @@ set(EXTRA_LIBS ${EXTRA_LIBS} ${GVC_LIB} ${CGRAPH_LIB} ${CDT_LIB})
 # So that the moc'd headers and sources can be found, and also, the protobuf source and headers:
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-find_package(Protobuf REQUIRED)
-if(PROTOBUF_FOUND)
-  set(EXTRA_LIBS ${EXTRA_LIBS} ${PROTOBUF_LIBRARIES})
-  include_directories(${PROTOBUF_INCLUDE_DIRS})
-  
-  set(TEMPLAR_PROTOS 
-    "templight_messages.proto"
-  )
-  
-  message("Generating protocol buffer classes from .proto files.")
-  
-  PROTOBUF_GENERATE_CPP(TEMPLAR_PROTO_SRCS TEMPLAR_PROTO_HDRS ${TEMPLAR_PROTOS})
-  
-  set(TEMPLAR_SOURCES ${TEMPLAR_SOURCES} ${TEMPLAR_PROTO_SRCS})
-  set(TEMPLAR_MOC_HDRS ${TEMPLAR_MOC_HDRS} ${TEMPLAR_PROTO_HDRS})
-  
-endif()
-
-
-
 set( TEMPLAR_UIS
   "gui/mainwindow.ui"
   "gui/sourceviewer.ui"
@@ -201,9 +181,11 @@ set(TEMPLAR_RESOURCES
   "resources.qrc"
 )
 
-add_executable(Templar ${TEMPLAR_SOURCES} ${TEMPLAR_RESOURCES})
-target_link_libraries(Templar ${QT_LIBRARIES} ${EXTRA_LIBS})
+add_subdirectory(templight-tools)
+include_directories(templight-tools/include)
 
+add_executable(Templar ${TEMPLAR_SOURCES} ${TEMPLAR_RESOURCES})
+target_link_libraries(Templar templight ${QT_LIBRARIES} ${EXTRA_LIBS})
 
 
 

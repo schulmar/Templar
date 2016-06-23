@@ -38,6 +38,8 @@ public:
     UsedSourceFileModel() = default;
     explicit UsedSourceFileModel(const std::vector<QString> &fileNames);
     void Add(const QString &newPath, size_t fileId);
+    // returns the assigned fileId
+    size_t Add(const QString &newPath);
 
     QString getAbsolutePathOf(size_t fileId);
 
@@ -59,6 +61,8 @@ public:
     SourceFileNode root;
     UsedFileMap nodeIdMap;
     QString relativePathRoot = ".";
+private:
+    SourceFileNode * AddImpl(const QString &path, size_t fileId);
 };
 }
 #endif // USEDSOURCEFILEMODEL_H

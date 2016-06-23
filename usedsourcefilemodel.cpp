@@ -19,7 +19,8 @@ UsedSourceFileModel::UsedSourceFileModel(const std::vector<QString> &fileNames) 
     }
 }
 
-void UsedSourceFileModel::Add(const QString &path, size_t fileId) {
+SourceFileNode * UsedSourceFileModel::AddImpl(const QString &path, size_t fileId)
+{
     QStringList components =
         path.split(QDir::separator(), QString::SkipEmptyParts);
     SourceFileNode *currentNode = &root;
@@ -37,8 +38,20 @@ void UsedSourceFileModel::Add(const QString &path, size_t fileId) {
         }
     }
     nodeIdMap.insert(fileId, currentNode);
-    currentNode->id = fileId;
     currentNode->fullPath = path;
+    currentNode->id = fileId;
+    return currentNode;
+}
+
+void UsedSourceFileModel::Add(const QString &path, size_t fileId) {
+    AddImpl(path, fileId);
+}
+
+size_t UsedSourceFileModel::Add(const QString &newPath)
+{
+    size_t fileId = nodeIdMap.empty() ? 0 : ((--nodeIdMap.end()).key() + 1);
+    AddImpl(newPath, fileId);
+    return fileId;
 }
 
 QString UsedSourceFileModel::getAbsolutePathOf(size_t fileId) {

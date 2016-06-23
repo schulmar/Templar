@@ -1,5 +1,5 @@
 #include "protobuftracereader.h"
-#include "templight_messages.pb.h"
+#include "templight-tools/include/templight/ProtobufReader.h"
 
 #include <fstream>
 #include "make_unique.hpp"
@@ -11,26 +11,31 @@ namespace Templar {
 
 ProtobufTraceReader::BuildReturn ProtobufTraceReader::build(QString fileName) {
     std::ifstream input(fileName.toStdString());
-    TemplightTraceCollection collection;
-    collection.ParseFromIstream(&input);
+    ::templight::ProtobufReader pbfReader;
+    pbfReader.startOnBuffer(input);
     BuildReturn model = make_unique<UsedSourceFileModel>();
-    for (int traceIndex = 0; traceIndex < collection.traces_size();
-         ++traceIndex) {
-        buildFromTrace(collection.traces(traceIndex), *model);
-    }
-    return model;
-}
-
-void ProtobufTraceReader::buildFromTrace(TemplightTrace const &trace,
-                                         UsedSourceFileModel &model) {
-    for (int entryIndex = 0; entryIndex < trace.entries_size(); ++entryIndex) {
-        auto &entry = trace.entries(entryIndex);
-        if (entry.has_begin()) {
-            begin(entry.begin(), trace, model);
-        } else if (entry.has_end()) {
-            end(entry.end());
+    while ( pbfReader.LastChunk != ::templight::ProtobufReader::EndOfFile ) {
+        switch ( pbfReader.LastChunk ) {
+          case ::templight::ProtobufReader::EndOfFile:
+            break;
+          case ::templight::ProtobufReader::Header:
+            pbfReader.next();
+            break;
+          case ::templight::ProtobufReader::BeginEntry:
+            begin(pbfReader.LastBeginEntry, *model);
+            pbfReader.next();
+            break;
+          case ::templight::ProtobufReader::EndEntry:
+            end(pbfReader.LastEndEntry);
+            pbfReader.next();
+            break;
+          case ::templight::ProtobufReader::Other:
+          default:
+            pbfReader.next();
+            break;
         }
     }
+    return model;
 }
 
 namespace {
@@ -41,72 +46,36 @@ namespace {
  *  This indirection might become necessary when the enums diverge
  */
 TraceEntry::InstantiationKind
-instantiationKindFromFile(::TemplightEntry_InstantiationKind kindInFile) {
-    return static_cast<TraceEntry::InstantiationKind>(int(kindInFile));
+instantiationKindFromFile(int kindInFile) {
+    return static_cast<TraceEntry::InstantiationKind>(kindInFile);
+}
 }
 
-struct dict_expansion_task {
-  DictionaryEntry const * p_entry;
-  std::size_t char_id;
-  std::size_t mark_id;
-};
-}
-
-void ProtobufTraceReader::begin(TemplightEntry_Begin const &begin,
-                                TemplightTrace const &trace,
-                                UsedSourceFileModel &model) {
+void ProtobufTraceReader::begin(::templight::PrintableEntryBegin begin, UsedSourceFileModel &model) {
     traceEntryPtr entry(new TraceEntry());
-    entry->kind = instantiationKindFromFile(begin.kind());
+    entry->kind = instantiationKindFromFile(begin.InstantiationKind);
+    entry->context = begin.Name.c_str();
     
-    if (begin.name().has_name()) {
-        entry->context = begin.name().name().c_str();
-    } else if (begin.name().has_dict_id()) {
-        // TODO Build a template-name dictionary that does the string expansion on-demand (and maybe produce reduced expansion levels)
-        std::string expanded_name;
-        std::vector< dict_expansion_task > tasks;
-        tasks.push_back(dict_expansion_task{&trace.names(begin.name().dict_id()), 0, 0});
-        while( !tasks.empty() ) {
-            const std::string& dict_name = tasks.back().p_entry->marked_name();
-            std::size_t new_char_id = 
-              std::find(dict_name.begin() + tasks.back().char_id, 
-                        dict_name.end(), '\0') - dict_name.begin();
-            expanded_name.append(dict_name.begin() + tasks.back().char_id, 
-                                 dict_name.begin() + new_char_id);
-            if( new_char_id < dict_name.size() ) {
-                tasks.back().char_id = new_char_id + 1;
-                dict_expansion_task next_task{&trace.names(tasks.back().p_entry->marker_ids(tasks.back().mark_id)), 0, 0};
-                tasks.back().mark_id += 1;
-                tasks.push_back(next_task);
-            } else {
-                tasks.pop_back();
-            }
-        }
-        entry->context = expanded_name.c_str();
-    } else {
-      // TODO Should report this as an error (unsupported format).
+    size_t fileId = -1U;
+    if (!begin.FileName.empty()) {
+        QFileInfo fileInfo(begin.FileName.c_str());
+        fileId = model.Add(fileInfo.isRelative() ? fileInfo.filePath()
+                                        : fileInfo.canonicalFilePath());
     }
-    
-    if (begin.location().has_file_name()) {
-        QFileInfo fileInfo(begin.location().file_name().c_str());
-        model.Add(fileInfo.isRelative() ? fileInfo.filePath()
-                                        : fileInfo.canonicalFilePath(),
-                  begin.location().file_id());
-    }
-    entry->instantiation =
-        SourceLocation{begin.location().file_id(), begin.location().line(),
-                       begin.location().column()};
+    entry->instantiation = SourceLocation{fileId, static_cast<unsigned>(begin.Line),
+                                            static_cast<unsigned>(begin.Column)};
     entry->instantiationBegin = entry->instantiation;
     entry->instantiationEnd = entry->instantiation;
     entry->declarationBegin = entry->instantiation;
     entry->declarationEnd = entry->instantiation;
-    entry->beginTimeStamp = begin.time_stamp();
-    entry->memoryUsage = begin.memory_usage();
+    entry->beginTimeStamp = begin.TimeStamp;
+    entry->memoryUsage = begin.MemoryUsage;
     beginEntry(entry);
 }
 
-void ProtobufTraceReader::end(TemplightEntry_End const &end) {
+void ProtobufTraceReader::end(::templight::PrintableEntryEnd end) {
     auto &entry = endEntry();
-    entry.endTimeStamp = end.time_stamp();
+    entry.endTimeStamp = end.TimeStamp;
 }
 
 } // namespace Templar

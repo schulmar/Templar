@@ -1,0 +1,3 @@
+[submodule "templight-tools"]
+	path = templight-tools
+	url = https://github.com/mikael-s-persson/templight-tools.git
