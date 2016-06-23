@@ -45,7 +45,7 @@ YAMLTraceReader::BuildReturn YAMLTraceReader::build(QString fileName) {
                     newEntry->instantiation;
                 newEntry->sourceFileId = newEntry->instantiation.fileId;
                 // store the start for later difference calculation
-                newEntry->duration = node["TimeStamp"].as<double>();
+                newEntry->beginTimeStamp = node["TimeStamp"].as<double>();
                 /* todo:
                 newEntry->declarationBegin;
                 newEntry->declarationEnd;
@@ -56,7 +56,7 @@ YAMLTraceReader::BuildReturn YAMLTraceReader::build(QString fileName) {
             } else {
                 auto &lastEntry = endEntry();
                 // calculate the difference to start
-                lastEntry.duration = node["TimeStamp"].as<double>() - lastEntry.duration;
+                lastEntry.endTimeStamp = node["TimeStamp"].as<double>();
                 lastEntry.memoryUsage = node["MemoryUsage"].as<long long>();
             }
         }
