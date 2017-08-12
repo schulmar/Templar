@@ -21,8 +21,10 @@ Build
 
 To build Templar run:
 
+```
 cmake CMakeLists.txt
 make
+```
 
 in the source folder.
 After make the folder should contain an executable named "Templar".
