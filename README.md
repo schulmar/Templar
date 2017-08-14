@@ -16,13 +16,27 @@ As Templight will probably be incorporated into clang the LLVM/clang license is 
 
 Templar was created by Zoltán Borok-Nagy so he holds the copyright on it.
 
+Dependencies
+============
+Templar uses following libraries:
+
+- Qt4 or Qt5
+- GraphViz (CGraph)
+- YamlCpp (for YAML file support, via PkgConfig)
+- protobuf (for protobuf file support)
+
 Build
 =====
 
+Make sure to check out the templight-tools submodule as well (e.g. `git submodule update --init`).
+Please be aware that this submodule might introduce further dependencies such as Boost.
+
 To build Templar run:
 
+```
 cmake CMakeLists.txt
 make
+```
 
 in the source folder.
 After make the folder should contain an executable named "Templar".
