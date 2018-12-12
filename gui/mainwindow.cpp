@@ -23,6 +23,7 @@
 #include <QInputDialog>
 #include <QRegExp>
 #include <QDockWidget>
+#include <QHeaderView>
 //#include <QListView>
 #include <QTableView>
 #include <QTreeView>
